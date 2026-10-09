@@ -320,7 +320,37 @@ button {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+}
+
+.btn-login {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  padding: 8px 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.btn-login:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.nav-btn-signup {
+  padding: 8px 20px;
+  font-size: 0.88rem;
+  white-space: nowrap;
 }
 
 .nav-cta {
