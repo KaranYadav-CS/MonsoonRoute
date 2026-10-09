@@ -27,7 +27,7 @@
   --color-cyan-bg: #E0F2FE;
 
   /* Page & Surface */
-  --color-bg-app: #F1F5F9;
+  --color-bg-app: #EBF4FD;
   --color-bg-page: #F8FAFC;
   --color-card-bg: #FFFFFF;
   --color-sidebar-bg: #0F172A;
@@ -134,6 +134,11 @@ img { display: block; max-width: 100%; }
   width: var(--sidebar-width);
   height: 100dvh;
   background-color: var(--color-sidebar-bg);
+  background-image:
+    linear-gradient(rgba(3, 20, 42, 0.78), rgba(3, 20, 42, 0.78)),
+    url("assets/Rainy Blue-Hour Monument Boulevard.webp");
+  background-position: center;
+  background-size: cover;
   display: flex;
   flex-direction: column;
   z-index: 100;
@@ -472,6 +477,7 @@ img { display: block; max-width: 100%; }
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .icon-btn {
@@ -492,7 +498,10 @@ img { display: block; max-width: 100%; }
 /* Notification Bell */
 .notification-wrap { position: relative; }
 
-.notification-btn { position: relative; }
+.notification-btn {
+  position: relative;
+  color: #021933;
+}
 
 .notification-badge {
   position: absolute;
@@ -610,6 +619,7 @@ img { display: block; max-width: 100%; }
   background: #fff;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-full);
+  color: #021933;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
@@ -620,7 +630,7 @@ img { display: block; max-width: 100%; }
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0084FF, #38BDF8);
+  background: #021933;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -906,13 +916,13 @@ img { display: block; max-width: 100%; }
 }
 
 .stat-card {
-  background: #fff;
+  background: #F7FBFE;
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: 18px;
   padding: 18px 20px;
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
+  align-items: center;
+  gap: 16px;
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-base);
   cursor: pointer;
@@ -925,50 +935,51 @@ img { display: block; max-width: 100%; }
 }
 
 .stat-icon-tile {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.red-tile { background: #FEF2F2; }
-.blue-tile { background: #EFF6FF; }
-.coral-tile { background: #FFF7ED; }
-.green-tile { background: #F0FDF4; }
+.red-tile { background: #FEE2E2; }
+.blue-tile { background: #E0F2FE; }
+.coral-tile { background: #FEE2E2; }
+.green-tile { background: #DCFCE7; }
 .cyan-tile { background: #E0F2FE; }
 
-.stat-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.stat-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 
 .stat-value {
   font-family: var(--font-heading);
-  font-size: 1.625rem;
+  font-size: 1.75rem;
   font-weight: 800;
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.text-red { color: var(--color-red); }
-.text-blue { color: var(--color-blue); }
-.text-coral { color: var(--color-coral); }
-.text-green { color: var(--color-green); }
+.text-red { color: #B91C1C; }
+.text-blue { color: #0066FF; }
+.text-coral { color: #B91C1C; }
+.text-green { color: #0F172A; }
 .text-muted { color: var(--color-text-muted); }
 
 .stat-label {
-  font-size: 0.8rem;
-  color: var(--color-text-muted);
-  font-weight: 500;
+  font-size: 0.8125rem;
+  color: #334155;
+  font-weight: 600;
 }
 
 .stat-subtext {
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-text-muted);
 }
 
 .badge-heavy-rain {
-  color: var(--color-blue);
+  color: #16A34A;
   font-weight: 700;
 }
 
@@ -978,7 +989,7 @@ img { display: block; max-width: 100%; }
   gap: 4px;
   font-size: 0.78rem;
   font-weight: 600;
-  color: var(--color-primary);
+  color: #0066FF;
   background: none;
   border: none;
   padding: 0;
@@ -1002,7 +1013,7 @@ img { display: block; max-width: 100%; }
 
 /* Card Base */
 .card {
-  background: #fff;
+  background: #F7FBFE;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -1157,42 +1168,57 @@ img { display: block; max-width: 100%; }
 }
 
 /* High Risk Card */
-.high-risk-card { overflow: hidden; }
+.high-risk-card {
+  overflow: hidden;
+  background: #FFF5F6;
+  border: 1.5px solid #FEE2E2;
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+}
 
 .card-header-warning {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px 12px;
-  border-bottom: 1px solid #FEF2F2;
-  background: linear-gradient(135deg, #FFF5F5 0%, #FFF 100%);
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid #FEE2E2;
+  background: transparent;
 }
 
 .warning-title-wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
-.warning-icon-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--radius-sm);
-  background: #FEF2F2;
+.warning-icon-img {
   flex-shrink: 0;
 }
 
 .warning-card-title {
   font-family: var(--font-heading);
-  font-size: 0.875rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--color-text-title);
+  color: #0F172A;
+  letter-spacing: -0.01em;
 }
 
-.view-all-link { font-size: 0.78rem; }
+.view-all-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0066FF;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.view-all-link:hover {
+  opacity: 0.75;
+}
 
 /* Risk Areas List */
 .risk-areas-list { display: flex; flex-direction: column; }
@@ -1201,58 +1227,64 @@ img { display: block; max-width: 100%; }
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  padding: 12px 16px;
-  border-bottom: 1px solid #F8FAFC;
+  padding: 14px 20px;
+  border-bottom: 1px solid #FEE2E2;
   cursor: pointer;
   transition: background var(--transition-fast);
+  background: transparent;
 }
 
 .risk-item-row:last-child { border-bottom: none; }
-.risk-item-row:hover { background: #FAFAFA; }
+.risk-item-row:hover { background: rgba(254, 226, 226, 0.4); }
 
 .risk-item-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex: 1;
+  gap: 12px;
 }
 
-.loc-pin-icon { display: flex; align-items: center; flex-shrink: 0; }
+.loc-pin-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
 .risk-location-name {
-  font-size: 0.8375rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: var(--color-text-title);
+  color: #1E293B;
 }
 
 .risk-item-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 
 .risk-badge {
-  font-size: 0.72rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  border-radius: 8px;
   white-space: nowrap;
+  line-height: 1.2;
 }
 
 .badge-high-risk {
   background: #FEE2E2;
-  color: #B91C1C;
-  border: 1px solid #FECACA;
+  color: #EF4444;
+  border: none;
 }
 
 .badge-moderate-risk {
-  background: #FFF7ED;
-  color: #C2410C;
-  border: 1px solid #FED7AA;
+  background: #FFEDD5;
+  color: #EA580C;
+  border: none;
 }
 
-.chevron-row-icon { flex-shrink: 0; }
+.chevron-row-icon {
+  flex-shrink: 0;
+  color: #334155;
+  stroke: #334155;
+}
 
 .risk-item-expanded {
   width: 100%;
@@ -1271,6 +1303,7 @@ img { display: block; max-width: 100%; }
 
 /* AI Recommendation Card */
 .ai-recommendation-card {
+  background: #EBF5FD;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1327,14 +1360,14 @@ img { display: block; max-width: 100%; }
 }
 
 .action-card {
-  background: #fff;
+  background: #F7FBFE;
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 16px 18px;
+  border-radius: 18px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   cursor: pointer;
   transition: all var(--transition-base);
   box-shadow: var(--shadow-sm);
@@ -1349,15 +1382,15 @@ img { display: block; max-width: 100%; }
 .action-card-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   flex: 1;
   min-width: 0;
 }
 
 .action-icon-tile {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1368,36 +1401,52 @@ img { display: block; max-width: 100%; }
 
 .action-card-title {
   font-family: var(--font-heading);
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   color: var(--color-text-title);
   margin-bottom: 2px;
 }
 
 .action-card-desc {
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
   color: var(--color-text-muted);
   line-height: 1.4;
 }
 
-.action-card-arrow { display: flex; align-items: center; flex-shrink: 0; }
+.action-card-arrow {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: #0066FF;
+}
 
-/* SOS Badge */
-.sos-badge {
-  background: #FEE2E2 !important;
-  border: 2px solid #FECACA;
+/* SOS Inner Badge */
+.sos-inner-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #EF4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sos-text {
   font-family: var(--font-heading);
   font-size: 0.75rem;
-  font-weight: 900;
-  color: #B91C1C;
-  letter-spacing: 0.05em;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 0.03em;
+  line-height: 1;
 }
 
-.emergency-action-card { border-color: #FECACA; }
-.emergency-action-card:hover { border-color: var(--color-red); }
+.emergency-action-card {
+  border-color: var(--color-border);
+}
+
+.emergency-action-card:hover {
+  border-color: var(--color-border-hover);
+}
 
 /* ==========================================================================
    11. MODALS
