@@ -232,7 +232,7 @@ function initSearch() {
         item.addEventListener('click', () => {
           input.value = item.dataset.dest || '';
           autocomplete.style.display = 'none';
-          showToast('🗺️', 'Route Calculating...', `Finding the safest path to ${input.value}`, 3000);
+          navigateToRoutes(input.value);
         });
       });
     }
@@ -261,12 +261,19 @@ function initSearch() {
       item.addEventListener('click', () => {
         input.value = item.dataset.dest;
         autocomplete.style.display = 'none';
-        showToast('🗺️', 'Route Calculating...', `Finding the safest path to ${input.value}`, 3000);
+        navigateToRoutes(input.value);
       });
     });
   }
 
+  function navigateToRoutes(destination) {
+    const params = new URLSearchParams({ destination });
+    window.location.href = `../Routes/index.html?${params.toString()}`;
+  }
+
   setupSearchInput('top-search-input', 'search-autocomplete');
+
+  window.navigateToRoutes = navigateToRoutes;
 }
 
 // Expose global handler for form submits
@@ -274,7 +281,8 @@ window.handleSearch = function(inputId) {
   const input = document.getElementById(inputId);
   const dest = input ? input.value.trim() : '';
   if (!dest) { showToast('⚠️', 'Enter destination', 'Please type a destination to find safe routes.'); return; }
-  showToast('🗺️', 'Route Calculating...', `Finding the safest path to "${dest}"...`, 4000);
+  const params = new URLSearchParams({ destination: dest });
+  window.location.href = `../Routes/index.html?${params.toString()}`;
 };
 
 /* ==========================================================================
@@ -305,6 +313,8 @@ function initDelhiMap() {
     attributionControl: true,
   });
 
+  mapEl.setAttribute('aria-busy', 'true');
+
   // Tile layer - OpenStreetMap
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
@@ -313,6 +323,7 @@ function initDelhiMap() {
 
   // Add zoom control to bottom right
   L.control.zoom({ position: 'bottomright' }).addTo(map);
+  map.whenReady(() => mapEl.setAttribute('aria-busy', 'false'));
 
   // -----------------------------------------------------------------------
   // Custom marker icon factory
@@ -605,9 +616,11 @@ function initModals() {
   const closeAiFooter = document.getElementById('close-ai-footer-btn');
   const startAiNav = document.getElementById('start-ai-nav-btn');
 
-  if (aiRecCard) aiRecCard.addEventListener('click', () => openModal('ai-route-modal'));
+  if (aiRecCard) aiRecCard.addEventListener('click', () => {
+    window.location.href = '../Routes/index.html';
+  });
   if (aiRecCard) aiRecCard.addEventListener('keydown', e => {
-    if (e.key === 'Enter') openModal('ai-route-modal');
+    if (e.key === 'Enter') window.location.href = '../Routes/index.html';
   });
   if (closeAiModal) closeAiModal.addEventListener('click', () => closeModal('ai-route-modal'));
   if (closeAiFooter) closeAiFooter.addEventListener('click', () => closeModal('ai-route-modal'));
@@ -649,14 +662,6 @@ function initModals() {
     });
   }
 
-  // View Full Map button
-  const viewFullMap = document.getElementById('view-full-map-btn');
-  if (viewFullMap) {
-    viewFullMap.addEventListener('click', () => {
-      showToast('🗺️', 'Full Map', 'Full map mode coming soon in MonsoonRoute Pro!');
-    });
-  }
-
   // View All Risk button
   const viewAllRisk = document.getElementById('view-all-risk-btn');
   if (viewAllRisk) {
@@ -681,7 +686,7 @@ function initModals() {
     'stat-card-waterlogged': () => showToast('💧', '23 Waterlogged Locations', 'Hotspots: Minto Bridge, ITO, Pul Bangash, Azadpur, Naraina.', 5000),
     'stat-card-rainfall': () => showToast('🌧️', '78mm Rainfall Today', 'Highest since 2019 monsoon. Drain overflow risk in low-lying areas.', 5000),
     'stat-card-closed': () => showToast('🚫', '12 Roads Closed', 'Barricades placed at Minto Bridge, DND Noida Link, Patel Rd Underpass.', 5000),
-    'stat-card-saferoutes': () => openModal('ai-route-modal'),
+    'stat-card-saferoutes': () => { window.location.href = '../Routes/index.html'; },
   };
 
   Object.entries(statCards).forEach(([id, handler]) => {

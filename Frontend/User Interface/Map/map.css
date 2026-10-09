@@ -1,0 +1,1003 @@
+/* ==========================================================================
+   MonsoonRoute - Delhi Live Risk Map Stylesheet
+   Designed to match the reference traffic intelligence interface
+   ========================================================================== */
+
+:root {
+  --color-brand-blue: #0084FF;
+  --color-brand-blue-hover: #0074E0;
+  --color-brand-blue-bg: #EBF4FD;
+  --map-bg: #F4F8FC;
+  --map-card-bg: #FFFFFF;
+  --map-border: #E2E8F0;
+  --map-border-hover: #CBD5E1;
+  --color-text-main: #0F172A;
+  --color-text-body: #1E293B;
+  --color-text-muted: #64748B;
+  --color-text-subtle: #94A3B8;
+  --color-risk-red: #EF4444;
+  --color-risk-red-bg: #FEE2E2;
+  --color-risk-amber: #F59E0B;
+  --color-risk-amber-bg: #FEF3C7;
+  --color-risk-green: #10B981;
+  --color-risk-green-bg: #DCFCE7;
+  --color-risk-black: #1F2937;
+  --color-risk-black-bg: #E2E8F0;
+}
+
+/* Base Page Layout */
+.map-main {
+  background-color: var(--map-bg);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   1. TOPBAR SEARCH & SETTINGS
+   ========================================================================== */
+.map-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  height: 72px;
+  padding: 0 32px;
+  background: #FFFFFF;
+  border-bottom: 1.5px solid var(--map-border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.map-search-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(680px, 100%);
+  background: #FFFFFF;
+  border: 1.5px solid var(--map-border);
+  border-radius: 14px;
+  padding: 5px 6px 5px 16px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.map-search-form:focus-within {
+  border-color: var(--color-brand-blue);
+  box-shadow: 0 0 0 3px rgba(0, 132, 255, 0.15);
+}
+
+.map-search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.map-search-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+#map-search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-text-body);
+}
+
+#map-search-input::placeholder {
+  color: var(--color-text-subtle);
+  font-size: 0.875rem;
+}
+
+.map-search-btn {
+  background: var(--color-brand-blue);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 20px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.map-search-btn:hover {
+  background: var(--color-brand-blue-hover);
+}
+
+.map-settings-btn {
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid var(--map-border);
+  border-radius: 12px;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-body);
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.map-settings-btn:hover {
+  border-color: var(--color-brand-blue);
+  color: var(--color-brand-blue);
+}
+
+/* ==========================================================================
+   2. PAGE BODY & TITLE SECTION
+   ========================================================================== */
+.map-page-body {
+  padding: 24px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.map-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.map-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.map-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #475569;
+  text-transform: uppercase;
+}
+
+.map-main-title {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.map-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+  margin-top: 2px;
+}
+
+.map-status-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.live-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-risk-green-bg);
+  color: #15803D;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+}
+
+.live-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22C55E;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+  animation: pulseLiveDot 2s infinite;
+}
+
+@keyframes pulseLiveDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.live-updated-time {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   3. INTERACTIVE MAP STAGE CARD
+   ========================================================================== */
+.map-stage-card {
+  position: relative;
+  height: 520px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1.5px solid var(--map-border);
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+  background: #E5EEF5;
+}
+
+.map-canvas {
+  width: 100%;
+  height: 100%;
+  background: #E5EEF5;
+}
+
+/* Floating Weather Widget (Top Right of Map) */
+.map-weather-card {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 500;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 14px 18px;
+  border: 1.5px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+  width: 230px;
+}
+
+.weather-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.weather-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.weather-temp-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.weather-temp-val {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  line-height: 1.1;
+}
+
+.weather-temp-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.weather-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.weather-submetric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1px;
+}
+
+.w-sub-icon {
+  font-size: 0.85rem;
+}
+
+.w-sub-val {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-body);
+}
+
+.w-sub-label {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+/* Floating Zoom & Locate Controls (Middle Right) */
+.map-controls-group {
+  position: absolute;
+  right: 20px;
+  bottom: 85px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  border: 1.5px solid var(--map-border);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+  overflow: hidden;
+  width: 42px;
+}
+
+.map-ctrl-btn {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-bottom: 1px solid var(--map-border);
+  background: transparent;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.map-ctrl-btn:last-child {
+  border-bottom: none;
+}
+
+.map-ctrl-btn:hover {
+  background: #F1F5F9;
+  color: var(--color-brand-blue);
+}
+
+/* Floating Traffic Legend Bar (Bottom Left) */
+.map-legend-bar {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 500;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 10px 20px;
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.legend-indicator {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-safe { background: #10B981; }
+.dot-moderate { background: #F59E0B; }
+.dot-waterlogged { background: #EF4444; }
+.dot-closed { background: #1F2937; }
+
+.legend-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.legend-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text-body);
+  line-height: 1.2;
+}
+
+.legend-desc {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   4. MAP MARKERS & CALLOUT POPUPS
+   ========================================================================== */
+.map-risk-marker {
+  background: transparent;
+  border: none;
+}
+
+.marker-pin-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 800;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.marker-pin-circle:hover {
+  transform: scale(1.15);
+}
+
+.marker-red { background: #EF4444; }
+.marker-amber { background: #F59E0B; }
+.marker-black { background: #1F2937; }
+.marker-blue { background: #007AFF; }
+
+/* Pulsing radar ring for Minto Bridge hotspot */
+.minto-pulse-wrap {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+
+.minto-pulse-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid #EF4444;
+  animation: pulseMarkerRadar 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulseMarkerRadar {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* Custom Interactive Callout on Map */
+.leaflet-popup-content-wrapper {
+  background: #FFFFFF !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15) !important;
+  border: 1px solid #E2E8F0 !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 10px 14px !important;
+  line-height: 1.3 !important;
+}
+
+.leaflet-popup-tip {
+  background: #FFFFFF !important;
+}
+
+.map-callout-bubble {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.callout-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.callout-header strong {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  white-space: nowrap;
+}
+
+.callout-badge {
+  background: var(--color-risk-red-bg);
+  color: var(--color-risk-red);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* Airport Label Marker */
+.airport-label-marker {
+  background: transparent;
+  border: none;
+}
+
+.airport-badge-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #BAE6FD;
+  border-radius: 8px;
+  padding: 3px 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #0369A1;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   5. BOTTOM THREE DETAIL CARDS GRID
+   ========================================================================== */
+.bottom-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.bottom-card {
+  background: #FFFFFF;
+  border: 1.5px solid var(--map-border);
+  border-radius: 20px;
+  padding: 20px 22px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  transition: all var(--transition-base);
+}
+
+.bottom-card:hover {
+  border-color: var(--map-border-hover);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+/* CARD 1: Selected Incident Details */
+.incident-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.incident-badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.incident-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.incident-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.incident-risk-pill {
+  display: inline-block;
+  background: var(--color-risk-red-bg);
+  color: var(--color-risk-red);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  width: fit-content;
+}
+
+.incident-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.incident-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.incident-spec-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spec-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.spec-text {
+  font-size: 0.8125rem;
+  color: var(--color-text-body);
+  font-weight: 500;
+}
+
+.spec-text strong {
+  font-weight: 700;
+  color: var(--color-risk-red);
+}
+
+.incident-thumbnail-wrap {
+  flex-shrink: 0;
+  width: 125px;
+  height: 90px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.incident-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.incident-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--color-risk-red-bg);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  color: var(--color-risk-red);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.incident-action-btn:hover {
+  background: #FDC7CE;
+}
+
+.action-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-btn-arrow {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* CARD 2: High Risk Areas */
+.card-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--map-border);
+}
+
+.box-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.box-header-title h3 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-text-main);
+  letter-spacing: -0.01em;
+}
+
+.box-header-link {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-brand-blue);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.box-header-link:hover {
+  opacity: 0.75;
+}
+
+.mini-risk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  list-style: none;
+}
+
+.mini-risk-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.mini-risk-row:hover, .mini-risk-row.active-row {
+  background: #F8FAFC;
+}
+
+.mini-row-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mini-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.dot-red { background: #EF4444; }
+.dot-amber { background: #F59E0B; }
+.dot-black { background: #1F2937; }
+
+.mini-row-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mini-row-text strong {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  line-height: 1.2;
+}
+
+.mini-row-text span {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  line-height: 1.2;
+}
+
+.mini-row-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.depth-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  min-width: 44px;
+  text-align: center;
+}
+
+.badge-red { background: var(--color-risk-red-bg); color: var(--color-risk-red); }
+.badge-amber { background: var(--color-risk-amber-bg); color: #B45309; }
+.badge-gray { background: #F1F5F9; color: var(--color-text-muted); }
+
+.time-text {
+  font-size: 0.7rem;
+  color: var(--color-text-subtle);
+  min-width: 55px;
+  text-align: right;
+}
+
+.mini-chevron {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+/* CARD 3: Recommended Routes */
+.rec-routes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rec-route-item {
+  background: #F8FAFC;
+  border: 1px solid var(--map-border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.rec-route-item:hover {
+  border-color: var(--color-brand-blue);
+  background: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(0, 132, 255, 0.08);
+}
+
+.rec-route-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.rec-route-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.rec-route-circle-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #10B981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rec-route-title-wrap strong {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rec-route-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.rec-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.badge-green { background: #DCFCE7; color: #15803D; }
+.badge-amber { background: #FEF3C7; color: #B45309; }
+
+.rec-chevron {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+}
+
+.rec-route-stats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.73rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.plan-route-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: var(--color-brand-blue);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 18px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.plan-route-btn:hover {
+  background: var(--color-brand-blue-hover);
+}
+
+/* ==========================================================================
+   6. RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .bottom-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .map-stage-card {
+    height: 480px;
+  }
+}
+
+@media (max-width: 900px) {
+  .map-topbar {
+    padding: 0 16px;
+  }
+  .map-page-body {
+    padding: 18px 16px 32px;
+  }
+  .map-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .map-status-block {
+    align-items: flex-start;
+  }
+  .map-weather-card {
+    top: 12px;
+    right: 12px;
+    width: 200px;
+    padding: 12px 14px;
+  }
+  .map-legend-bar {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .map-search-btn {
+    display: none;
+  }
+  .map-weather-card {
+    display: none;
+  }
+  .map-stage-card {
+    height: 400px;
+  }
+}
