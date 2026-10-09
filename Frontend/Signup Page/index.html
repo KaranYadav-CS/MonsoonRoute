@@ -45,7 +45,7 @@
               src="assets/logo-white-text.webp" 
               alt="MonsoonRoute" 
               class="hero-logo-img" 
-              height="48"
+              height="44"
               onerror="this.style.display='none'; document.getElementById('hero-logo-fallback').style.display='flex';"
             >
             <div id="hero-logo-fallback" class="hero-logo-fallback" style="display: none;">
@@ -67,25 +67,27 @@
             </p>
           </div>
 
-          <!-- 3 Short Feature Rows (Icon + Title + Single-Line Description) -->
+          <!-- 3 Short Feature Rows matching design -->
           <ul class="hero-features-list" role="list">
-            <!-- Feature 1 -->
+            <!-- Feature 1: Avoid Waterlogged Roads -->
             <li class="hero-feature-row">
               <div class="feature-icon-tile" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tile-svg">
+                <img src="assets/icons/drop.webp" alt="" class="feature-icon-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tile-svg fallback-svg" style="display:none;">
                   <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
                 </svg>
               </div>
               <div class="feature-row-text">
                 <h2 class="feature-title">Avoid Waterlogged Roads</h2>
-                <p class="feature-desc">Real-time flood alerts and safer route recommendations.</p>
+                <p class="feature-desc">Get real-time alerts and safer route recommendations.</p>
               </div>
             </li>
 
-            <!-- Feature 2 -->
+            <!-- Feature 2: AI-Powered Predictions -->
             <li class="hero-feature-row">
               <div class="feature-icon-tile" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tile-svg">
+                <img src="assets/icons/bar-chart.webp" alt="" class="feature-icon-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tile-svg fallback-svg" style="display:none;">
                   <line x1="18" y1="20" x2="18" y2="10"></line>
                   <line x1="12" y1="20" x2="12" y2="4"></line>
                   <line x1="6" y1="20" x2="6" y2="14"></line>
@@ -93,14 +95,15 @@
               </div>
               <div class="feature-row-text">
                 <h2 class="feature-title">AI-Powered Predictions</h2>
-                <p class="feature-desc">Forecast which road segments will flood before you depart.</p>
+                <p class="feature-desc">Know which areas may flood in the near future.</p>
               </div>
             </li>
 
-            <!-- Feature 3 -->
+            <!-- Feature 3: Faster, Safer Travel -->
             <li class="hero-feature-row">
               <div class="feature-icon-tile" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tile-svg">
+                <img src="assets/icons/route-risk.webp" alt="" class="feature-icon-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tile-svg fallback-svg" style="display:none;">
                   <circle cx="6" cy="19" r="3"></circle>
                   <path d="M9 19h8.5a4.5 4.5 0 0 0 0-9H11"></path>
                   <path d="M8 7l3 3-3 3"></path>
@@ -109,7 +112,7 @@
               </div>
               <div class="feature-row-text">
                 <h2 class="feature-title">Faster, Safer Travel</h2>
-                <p class="feature-desc">Reach your destination with minimal water exposure.</p>
+                <p class="feature-desc">Reach your destination with less risk and less stress.</p>
               </div>
             </li>
           </ul>
@@ -147,7 +150,7 @@
         </a>
         <div class="top-login-wrapper">
           <span class="already-account-label">Already have an account?</span>
-          <a href="../Landing Page/index.html#login" class="btn-secondary-login" id="btn-top-login">Login</a>
+          <a href="../Login Page/index.html" class="btn-secondary-login" id="btn-top-login">Login</a>
         </div>
       </div>
 
