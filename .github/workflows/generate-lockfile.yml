@@ -7,6 +7,8 @@ permissions:
   contents: read
 jobs:
   regenerate_lockfile:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -29,3 +31,19 @@ jobs:
           path: package-lock.json
           if-no-files-found: error
           retention-days: 7
+      - name: Commit verified lockfile through scoped GitHub API
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if git ls-files --error-unmatch package-lock.json >/dev/null 2>&1; then
+            echo "Lockfile already tracked; no mutation."
+            exit 0
+          fi
+          encoded="$(base64 -w0 package-lock.json)"
+          gh api -X PUT repos/KaranYadav-CS/MonsoonRoute/contents/package-lock.json \
+            -f message='build(lock): commit CI-verified dependency graph' \
+            -f content="$encoded" \
+            -f branch='main' >/dev/null
+          echo "Lockfile committed; latest branch must be validated by CI."
