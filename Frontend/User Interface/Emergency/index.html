@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Assistance - MonsoonRoute | Delhi 24x7 Flood Help</title>
+  <meta name="description" content="Quick access to monsoon emergency help, shelters, hospitals, flood rescue teams, and 24x7 Delhi helplines.">
+  <link rel="icon" type="image/webp" href="../Dashboard/assets/icons/drop.webp">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../Dashboard/styles.css">
+  <link rel="stylesheet" href="emergency.css">
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- =========================================================================
+         1. LEFT SIDEBAR NAVIGATION
+         ========================================================================= -->
+    <aside class="sidebar" id="sidebar" aria-label="Main Navigation">
+      <div class="sidebar-header">
+        <a href="../Dashboard/index.html" class="brand-logo brand-logo--full" aria-label="MonsoonRoute Home">
+          <img src="../Dashboard/assets/logo-white-text.webp" alt="MonsoonRoute Logo" class="brand-logo-img--full">
+        </a>
+        <button class="mobile-sidebar-close" id="sidebar-close-btn" aria-label="Close sidebar">✕</button>
+      </div>
+      <nav class="sidebar-nav" aria-label="Primary Navigation">
+        <ul class="nav-list" role="list">
+          <li class="nav-item">
+            <a href="../Dashboard/index.html" class="nav-link" id="nav-home">
+              <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+              </span>
+              <span class="nav-label">Home</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../Map/index.html" class="nav-link" id="nav-map">
+              <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                  <line x1="8" y1="2" x2="8" y2="18"></line>
+                  <line x1="16" y1="6" x2="16" y2="22"></line>
+                </svg>
+              </span>
+              <span class="nav-label">Map</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../Routes/index.html" class="nav-link" id="nav-routes">
+              <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="6" cy="19" r="3"></circle>
+                  <path d="M9 19h8.5a4.5 4.5 0 0 0 0-9H7a4 4 0 0 1 0-8h11"></path>
+                  <circle cx="18" cy="5" r="3"></circle>
+                </svg>
+              </span>
+              <span class="nav-label">Routes</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../Report/index.html" class="nav-link" id="nav-report">
+              <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                  <path d="M9 12h6M9 16h6"></path>
+                </svg>
+              </span>
+              <span class="nav-label">Report</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="index.html" class="nav-link active" id="nav-emergency" aria-current="page">
+              <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </span>
+              <span class="nav-label">Emergency</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="../Dashboard/index.html#profile" class="nav-link" id="nav-profile">
+              <span class="nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </span>
+              <span class="nav-label">Profile</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- =========================================================================
+         2. MAIN CONTENT AREA
+         ========================================================================= -->
+    <main class="main-content emergency-main">
+      <button class="mobile-nav-toggle emergency-menu-toggle" id="mobile-nav-toggle" aria-label="Open sidebar menu">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+
+      <div class="emergency-page">
+        
+        <!-- Header Top Row: Back button + Title & Info Banner -->
+        <div class="emergency-top-header">
+          <header class="emergency-title-card">
+            <button class="emergency-back-btn" type="button" id="emergency-back-btn" aria-label="Go back">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <div class="emergency-title-text">
+              <h1>Emergency Assistance</h1>
+              <p>Quick access to monsoon emergency help, shelters, hospitals, and critical helplines.</p>
+            </div>
+          </header>
+
+          <aside class="emergency-safety-notice" aria-label="Monsoon safety notice">
+            <div class="safety-icon-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>Stay informed. Stay safe.</strong>
+              <p>Get help, find nearby services, and report waterlogging during heavy rain.</p>
+            </div>
+          </aside>
+        </div>
+
+        <!-- SOS Hero Card: "Need Immediate Help?" -->
+        <section class="emergency-sos-banner" aria-labelledby="sos-title">
+          <div class="sos-left-content">
+            <div class="sos-siren-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                <line x1="12" y1="2" x2="12" y2="4"></line>
+                <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line>
+                <line x1="19.07" y1="4.93" x2="17.66" y2="6.34"></line>
+              </svg>
+            </div>
+            <div class="sos-text">
+              <h2 id="sos-title">Need Immediate Help?</h2>
+              <p>Quick access to essential emergency services during monsoon conditions in Delhi.</p>
+            </div>
+          </div>
+          <a href="tel:112" class="sos-call-btn" id="sos-call-btn" aria-label="Call Emergency Helpline 112">
+            <span class="sos-phone-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/>
+              </svg>
+            </span>
+            <div class="sos-btn-text">
+              <strong>Call Emergency Helpline</strong>
+              <small>112 (All India Emergency Number)</small>
+            </div>
+          </a>
+        </section>
+
+        <!-- Two-Column Main Layout -->
+        <div class="emergency-grid">
+          
+          <!-- ===================================================================
+               LEFT COLUMN: Quick Access Services + Helpline Directory
+               =================================================================== -->
+          <div class="emergency-col-left">
+            
+            <!-- Card: Quick Access Services -->
+            <section class="emergency-card services-card" aria-labelledby="services-title">
+              <div class="card-header-row">
+                <div class="card-header-title">
+                  <span class="header-icon-circle header-icon--blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                  </span>
+                  <h2 id="services-title">Quick Access Services</h2>
+                </div>
+                <span class="card-header-sub">Find nearby help and essential services</span>
+              </div>
+
+              <!-- 6 Services Grid (3x2) -->
+              <div class="services-grid">
+                
+                <!-- 1. Nearby Hospitals -->
+                <button type="button" class="service-tile" data-service="hospitals">
+                  <div class="service-icon-box service-icon--red">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                      <line x1="12" y1="11" x2="12" y2="17"></line>
+                      <line x1="9" y1="14" x2="15" y2="14"></line>
+                    </svg>
+                  </div>
+                  <div class="service-tile-text">
+                    <h3>Nearby Hospitals</h3>
+                    <p>Find hospitals nearby</p>
+                  </div>
+                  <span class="service-chevron" aria-hidden="true">›</span>
+                </button>
+
+                <!-- 2. Police Stations -->
+                <button type="button" class="service-tile" data-service="police">
+                  <div class="service-icon-box service-icon--blue">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                      <line x1="12" y1="8" x2="12" y2="14"></line>
+                      <line x1="9" y1="11" x2="15" y2="11"></line>
+                    </svg>
+                  </div>
+                  <div class="service-tile-text">
+                    <h3>Police Stations</h3>
+                    <p>Get police station locations</p>
+                  </div>
+                  <span class="service-chevron" aria-hidden="true">›</span>
+                </button>
+
+                <!-- 3. Emergency Services -->
+                <button type="button" class="service-tile" data-service="emergency-rescue">
+                  <div class="service-icon-box service-icon--red-dark">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="1" y="3" width="15" height="13"></rect>
+                      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                      <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                      <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
+                  </div>
+                  <div class="service-tile-text">
+                    <h3>Emergency Services</h3>
+                    <p>Fire, ambulance & rescue</p>
+                  </div>
+                  <span class="service-chevron" aria-hidden="true">›</span>
+                </button>
+
+                <!-- 4. Fuel Stations -->
+                <button type="button" class="service-tile" data-service="fuel">
+                  <div class="service-icon-box service-icon--cyan">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 22v-8a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v8"></path>
+                      <path d="M13 10V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v6"></path>
+                      <line x1="3" y1="22" x2="13" y2="22"></line>
+                      <path d="M17 14h2a2 2 0 0 1 2 2v3a1 1 0 0 1-2 0v-2"></path>
+                    </svg>
+                  </div>
+                  <div class="service-tile-text">
+                    <h3>Fuel Stations</h3>
+                    <p>Locate nearby fuel stations</p>
+                  </div>
+                  <span class="service-chevron" aria-hidden="true">›</span>
+                </button>
+
+                <!-- 5. Safe Shelters -->
+                <button type="button" class="service-tile" data-service="shelters">
+                  <div class="service-icon-box service-icon--green">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                  </div>
+                  <div class="service-tile-text">
+                    <h3>Safe Shelters</h3>
+                    <p>Relief centres & safe locations</p>
+                  </div>
+                  <span class="service-chevron" aria-hidden="true">›</span>
+                </button>
+
+                <!-- 6. Tow / Roadside Help -->
+                <button type="button" class="service-tile" data-service="tow">
+                  <div class="service-icon-box service-icon--purple">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="7" cy="17" r="3"></circle>
+                      <circle cx="17" cy="17" r="3"></circle>
+                      <path d="M10 17h4"></path>
+                      <path d="M4 17l2-7h6l2 4h4v3"></path>
+                      <line x1="20" y1="12" x2="23" y2="12"></line>
+                    </svg>
+                  </div>
+                  <div class="service-tile-text">
+                    <h3>Tow / Roadside Help</h3>
+                    <p>Vehicle assistance during waterlogging</p>
+                  </div>
+                  <span class="service-chevron" aria-hidden="true">›</span>
+                </button>
+
+              </div>
+            </section>
+
+            <!-- Card: Delhi Emergency Helpline Directory -->
+            <section class="emergency-card helplines-card" aria-labelledby="helpline-title">
+              <div class="card-header-row">
+                <div class="card-header-title">
+                  <span class="header-icon-circle header-icon--blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                  </span>
+                  <h2 id="helpline-title">Delhi Emergency Helpline Directory</h2>
+                </div>
+              </div>
+              <p class="helpline-sub-desc">Direct 24×7 helplines for flood rescue, traffic police & roadside assistance.</p>
+
+              <!-- 4 Helpline Rows -->
+              <div class="helpline-list">
+                
+                <!-- Row 1: Delhi Traffic Police -->
+                <div class="helpline-row">
+                  <div class="helpline-info">
+                    <h3>Delhi Traffic Police Control Room</h3>
+                    <p>Real-time road obstruction and waterlogging rescue</p>
+                  </div>
+                  <a href="tel:1095" class="helpline-btn helpline-btn--blue" title="Click to call">
+                    <span class="phone-svg" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/>
+                      </svg>
+                    </span>
+                    <span>1095 / 011-2584-4444</span>
+                  </a>
+                </div>
+
+                <!-- Row 2: PWD Monsoon Control Room -->
+                <div class="helpline-row">
+                  <div class="helpline-info">
+                    <h3>PWD Monsoon Control Room</h3>
+                    <p>Drain desilting and emergency water pump dispatch</p>
+                  </div>
+                  <a href="tel:1800118578" class="helpline-btn helpline-btn--blue" title="Click to call">
+                    <span class="phone-svg" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/>
+                      </svg>
+                    </span>
+                    <span>1800-11-8578</span>
+                  </a>
+                </div>
+
+                <!-- Row 3: NDRF -->
+                <div class="helpline-row">
+                  <div class="helpline-info">
+                    <h3>National Disaster Response Force (NDRF)</h3>
+                    <p>Flood relief and submerged vehicle rescue</p>
+                  </div>
+                  <a href="tel:01124363260" class="helpline-btn helpline-btn--blue" title="Click to call">
+                    <span class="phone-svg" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/>
+                      </svg>
+                    </span>
+                    <span>011-24363260</span>
+                  </a>
+                </div>
+
+                <!-- Row 4: Delhi Emergency Central Helpline -->
+                <div class="helpline-row">
+                  <div class="helpline-info">
+                    <h3>Delhi Emergency Central Helpline</h3>
+                    <p>Ambulance, Fire and Multi-agency response</p>
+                  </div>
+                  <a href="tel:112" class="helpline-btn helpline-btn--red" title="Click to call">
+                    <span class="phone-svg" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                        <path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/>
+                      </svg>
+                    </span>
+                    <span>112 (Universal)</span>
+                  </a>
+                </div>
+
+              </div>
+            </section>
+
+          </div>
+
+          <!-- ===================================================================
+               RIGHT COLUMN: When to Call + Safety Tips + Nearest Help Map
+               =================================================================== -->
+          <div class="emergency-col-right">
+            
+            <!-- Card: When to Call Emergency Services -->
+            <section class="emergency-card guidelines-card" aria-labelledby="guidelines-title">
+              <div class="card-header-row">
+                <div class="card-header-title">
+                  <span class="header-icon-circle header-icon--red" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                  </span>
+                  <h2 id="guidelines-title">When to Call Emergency Services</h2>
+                </div>
+              </div>
+
+              <div class="guidelines-list">
+                <div class="guideline-item">
+                  <span class="guideline-icon-circle icon-blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                    </svg>
+                  </span>
+                  <div>
+                    <strong>Severe waterlogging</strong>
+                    <p>Roads blocked or vehicles stranded</p>
+                  </div>
+                </div>
+
+                <div class="guideline-item">
+                  <span class="guideline-icon-circle icon-red" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                      <circle cx="7" cy="15" r="2"></circle>
+                      <circle cx="17" cy="15" r="2"></circle>
+                    </svg>
+                  </span>
+                  <div>
+                    <strong>Vehicle breakdown</strong>
+                    <p>Car stuck in high water</p>
+                  </div>
+                </div>
+
+                <div class="guideline-item">
+                  <span class="guideline-icon-circle icon-red" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                      <line x1="12" y1="6" x2="12" y2="18"></line>
+                      <line x1="6" y1="12" x2="18" y2="12"></line>
+                    </svg>
+                  </span>
+                  <div>
+                    <strong>Medical emergency</strong>
+                    <p>Accident, injury or health issue</p>
+                  </div>
+                </div>
+
+                <div class="guideline-item">
+                  <span class="guideline-icon-circle icon-blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                    </svg>
+                  </span>
+                  <div>
+                    <strong>People in danger</strong>
+                    <p>Anyone stranded or needing rescue</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Card: Flood Safety Tips -->
+            <section class="emergency-card tips-card" aria-labelledby="tips-title">
+              <div class="card-header-row">
+                <div class="card-header-title">
+                  <span class="header-icon-circle header-icon--blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9 18h6M10 22h4M8.5 14.5C7.55 13.55 7 12.3 7 10.9A5 5 0 0 1 17 11c0 1.3-.5 2.5-1.4 3.4-.8.8-1.6 1.5-1.6 2.6h-4c0-1-.7-1.7-1.5-2.5z"></path>
+                    </svg>
+                  </span>
+                  <div>
+                    <h2 id="tips-title">Flood Safety Tips</h2>
+                    <span class="tips-sub">Stay safe during heavy rainfall</span>
+                  </div>
+                </div>
+              </div>
+
+              <ul class="tips-checklist" role="list">
+                <li>
+                  <span class="tip-check-circle" aria-hidden="true">✓</span>
+                  <span>Avoid driving through flooded roads</span>
+                </li>
+                <li>
+                  <span class="tip-check-circle" aria-hidden="true">✓</span>
+                  <span>Follow official alerts and road closures</span>
+                </li>
+                <li>
+                  <span class="tip-check-circle" aria-hidden="true">✓</span>
+                  <span>Move to higher ground if needed</span>
+                </li>
+                <li>
+                  <span class="tip-check-circle" aria-hidden="true">✓</span>
+                  <span>Keep emergency numbers handy</span>
+                </li>
+                <li>
+                  <span class="tip-check-circle" aria-hidden="true">✓</span>
+                  <span>Help others and report waterlogging</span>
+                </li>
+              </ul>
+            </section>
+
+            <!-- Card: Find Nearest Help Around You (Interactive Map) -->
+            <section class="emergency-card map-card" aria-labelledby="map-title">
+              <div class="card-header-row">
+                <div class="card-header-title">
+                  <span class="header-icon-circle header-icon--blue" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                  </span>
+                  <div>
+                    <h2 id="map-title">Find Nearest Help Around You</h2>
+                    <span class="map-sub">View hospitals, police stations, shelters and more on the map.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Map Container -->
+              <div class="emergency-map-wrap">
+                <div id="emergency-map-leaflet" class="emergency-map-stage" aria-label="Interactive emergency facilities map"></div>
+                
+                <!-- Locate me button -->
+                <button type="button" class="map-locate-btn" id="map-locate-btn" title="Locate my position">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="22" y1="12" x2="18" y2="12"></line>
+                    <line x1="6" y1="12" x2="2" y2="12"></line>
+                    <line x1="12" y1="6" x2="12" y2="2"></line>
+                    <line x1="12" y1="22" x2="12" y2="18"></line>
+                  </svg>
+                </button>
+
+                <!-- Open Emergency Map Button -->
+                <a href="../Map/index.html" class="open-emergency-map-btn" id="open-emergency-map-btn">
+                  <span class="map-icon-svg" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                      <line x1="8" y1="2" x2="8" y2="18"></line>
+                      <line x1="16" y1="6" x2="16" y2="22"></line>
+                    </svg>
+                  </span>
+                  <span>Open Emergency Map</span>
+                  <span class="map-arrow">→</span>
+                </a>
+              </div>
+            </section>
+
+          </div>
+
+        </div>
+
+        <!-- Bottom Banner: Broadcast Flood Report -->
+        <aside class="emergency-broadcast-banner" aria-label="Broadcast alert banner">
+          <div class="broadcast-left">
+            <div class="broadcast-icon-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div class="broadcast-text">
+              <strong>See waterlogging or a dangerous situation?</strong>
+              <p>Help others stay safe by reporting it to the community.</p>
+            </div>
+          </div>
+          <a href="../Report/index.html" class="broadcast-cta-btn" id="broadcast-report-btn">
+            <span class="siren-svg" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </span>
+            <span>Broadcast Flood Report</span>
+            <span class="cta-arrow">→</span>
+          </a>
+        </aside>
+
+      </div>
+
+      <!-- Quick Services Directory Modal -->
+      <div class="modal-backdrop" id="services-modal" hidden>
+        <div class="services-modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-service-title">
+          <div class="modal-header">
+            <div class="modal-title-wrap">
+              <span class="modal-category-icon" id="modal-category-icon">🏥</span>
+              <div>
+                <h2 id="modal-service-title">Nearby Hospitals</h2>
+                <p id="modal-service-sub">Emergency trauma and monsoon medical response in Delhi</p>
+              </div>
+            </div>
+            <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close modal">✕</button>
+          </div>
+
+          <div class="modal-directory-list" id="modal-directory-list">
+            <!-- Dynamically populated by emergency.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Confirmation Toast -->
+      <div class="emergency-toast" id="emergency-toast" role="status" aria-live="polite"></div>
+
+    </main>
+  </div>
+
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- Controller Script -->
+  <script src="emergency.js"></script>
+</body>
+</html>
