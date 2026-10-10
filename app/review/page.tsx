@@ -1,0 +1,1 @@
+import ReviewPanel from '@/components/ReviewPanel';export default function Review(){return <><section className="container pageHero"><span className="eyebrow">Human in the loop</span><h1>Review observations</h1><p>Revision-controlled decisions and time-bounded road closures.</p></section><section className="container centerCard"><ReviewPanel/></section></>}

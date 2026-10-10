@@ -1,0 +1,26 @@
+project_id = "monsoonroute"
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 2000
+[db]
+port = 54322
+major_version = 15
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+jwt_expiry = 900
+enable_signup = true
+enable_anonymous_sign_ins = false
+[auth.email]
+enable_signup = false
+[auth.external.github]
+enabled = true
+client_id = "env(GITHUB_OAUTH_CLIENT_ID)"
+secret = "env(GITHUB_OAUTH_CLIENT_SECRET)"
+[storage]
+enabled = true
+file_size_limit = "3MiB"

@@ -1,0 +1,5 @@
+export const runtime='nodejs';
+export const preferredRegion='bom1';
+export const maxDuration=30;
+import {handler} from '@/lib/server/http';import {success,failure,ApiError} from '@/lib/server/errors';import {serviceDB} from '@/lib/server/supabase';import {requireRole} from '@/lib/server/auth';import {ModerationInput,Id} from '@/packages/contracts';import {originCheck,strictJson} from '@/lib/server/authorization';
+export const POST=async(req:Request,{params}:{params:Promise<{id:string}>})=>handler(async()=>{originCheck(req);const u=await requireRole('moderator');const {id}=await params;if(!Id.safeParse(id).success)throw new ApiError(400,'INVALID_INPUT');let input;try{input=ModerationInput.parse(await strictJson(req))}catch{throw new ApiError(400,'INVALID_INPUT')}const {data,error}=await serviceDB().rpc('moderate_report',{p_actor:u.id,p_report:id,p_expected_version:input.expected_version,p_action:input.action,p_reason:input.reason,p_close_minutes:input.close_minutes,p_scope:input.closure_scope});if(error)throw new ApiError(409,'INVALID_INPUT');return success(data)});

@@ -1,0 +1,5 @@
+export const runtime='nodejs';
+export const preferredRegion='bom1';
+export const maxDuration=30;
+import {handler} from '@/lib/server/http';import {success,failure,ApiError} from '@/lib/server/errors';import {serviceDB} from '@/lib/server/supabase';import {requireRole} from '@/lib/server/auth';import {ReviewQuery,validateSingleParams} from '@/packages/contracts';
+export const GET=async(req:Request)=>handler(async()=>{await requireRole('moderator');let x;try{x=ReviewQuery.parse(validateSingleParams(new URL(req.url),new Set(['status','cursor'])))}catch{throw new ApiError(400,'INVALID_INPUT')}if(x.cursor)throw new ApiError(422,'INVALID_INPUT');const {data,error}=await serviceDB().from('reports').select('id,status,category,observed_at,review_version,created_at,photo_processed_path').eq('status',x.status).order('created_at',{ascending:false}).limit(20);if(error)throw new ApiError(503,'BACKEND_UNAVAILABLE');return success({items:(data||[]).map(r=>({id:r.id,status:r.status,category:r.category,observed_at:r.observed_at,review_version:r.review_version,created_at:r.created_at,photo_ready:!!r.photo_processed_path})),next_cursor:null})});

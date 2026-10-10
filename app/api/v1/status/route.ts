@@ -1,0 +1,4 @@
+export const runtime='nodejs';
+export const preferredRegion='bom1';
+export const maxDuration=30;
+import {handler} from '@/lib/server/http';import {success,failure,ApiError} from '@/lib/server/errors';import {serviceDB} from '@/lib/server/supabase';export const GET=async()=>handler(async()=>{const db=serviceDB();const {data,error}=await db.from('service_status').select('name,last_success_at,last_error_code');if(error)throw new ApiError(503,'BACKEND_UNAVAILABLE');const components=Object.fromEntries((data??[]).filter(x=>['database','graph','weather','vision'].includes(x.name)).map(x=>[x.name,{status:x.last_success_at?'healthy':'unknown',last_success_at:x.last_success_at,last_error_code:x.last_error_code}]));return success({checked_at:new Date().toISOString(),build_sha:process.env.BUILD_SHA||'unreleased',components,weather:{run_id:null,retrieved_at:null,age_minutes:null,source_issued_at:null,refresh_id:null}})});

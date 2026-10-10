@@ -1,0 +1,2 @@
+import {ApiError,failure} from './errors';
+export async function handler(fn:()=>Promise<Response>){try{return await fn()}catch(e){if(e instanceof ApiError)return failure(e.code,e.status);const m=e instanceof Error?e.message:'';if(['GRAPH_UNAVAILABLE','WEATHER_UNAVAILABLE','BACKEND_UNAVAILABLE','POINT_NOT_ON_NETWORK','TRIP_TOO_SHORT','POINT_OUT_OF_PILOT','NO_NETWORK_ROUTE','DETOUR_INVALID'].includes(m))return failure(m,['TRIP_TOO_SHORT','POINT_NOT_ON_NETWORK','POINT_OUT_OF_PILOT','DETOUR_INVALID'].includes(m)?422:503);return failure('BACKEND_UNAVAILABLE')}}

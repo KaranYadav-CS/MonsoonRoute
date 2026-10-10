@@ -1,0 +1,68 @@
+{
+  "actual_external_blockers": [
+    "Reviewed and licensed published Central Delhi graph and DEM/landmark data",
+    "Model snapshot/ONNX byte artifact, parity+real Lambda evaluation",
+    "Npm dependency lockfile and full Next build/semantic checks",
+    "Hosted OAuth, admin/reviewer identity, HMAC/provider secrets",
+    "Live weather capture and complete signed-in RLS/worker execution",
+    "Karan Vercel Git link still uses prior wrong repo spelling"
+  ],
+  "application": {
+    "api_route_files": 19,
+    "framework": "Next.js 16",
+    "next_app_pages": 7,
+    "node": "22",
+    "react": "19",
+    "source_has_separate_standalone_browser_demo": true
+  },
+  "canonical_specification_sha256": "08c5fa6e520286b25db6bafdbbfd2648d826a1c01dc9ca780a244ca564d5ad98",
+  "cloud_provider_mutations_this_iteration": 0,
+  "codebase": "SELF_AUTHORED_OFFLINE_NEW_SOURCE",
+  "date": "2026-10-10",
+  "feature_flags_live_backend": {
+    "aws_enabled": false,
+    "photos_enabled": false,
+    "vision_enabled": false,
+    "weather_ingest_enabled": false
+  },
+  "generated_demo_inputs_are_synthetic": true,
+  "git_commits_or_pushes": 0,
+  "next_phase": "P5_EXTERNAL_INTEGRATION_AFTER_GATES_AND_USER_APPROVAL",
+  "no_real_world_navigation_claim": true,
+  "phase": "P4",
+  "read_only_baseline_commit": "35d0e21c2004254f40522c9e24dacf8a36792534",
+  "remote_repository": "KaranYadav-CS/MonsoonRoute",
+  "repository_legacy_assets_used": false,
+  "status": "P4_OFFLINE_SOURCE_DELIVERED_FULL_RELEASE_BLOCKED",
+  "tests": {
+    "aws_template_validator": "PASS",
+    "browser_desktop": {
+      "js_errors": 0,
+      "overflow": false,
+      "status": "PASS",
+      "viewport": "1440x900",
+      "visible_route_options": 3
+    },
+    "browser_mobile": {
+      "js_errors": 0,
+      "overflow": false,
+      "status": "PASS",
+      "viewport": "390x844",
+      "visible_route_options": 3
+    },
+    "full_next_build": "NOT_RUN_NPM_REGISTRY_UNAVAILABLE",
+    "full_next_typecheck": "NOT_RUN_NPM_REGISTRY_UNAVAILABLE",
+    "isolated_browser_engine_parity_tests": 4,
+    "next_playwright_e2e": "NOT_RUN_NPM_REGISTRY_UNAVAILABLE",
+    "node_failed": 0,
+    "node_passed": 31,
+    "python_failed": 0,
+    "python_passed": 21,
+    "release_doctor": "EXPECTED_FAIL_REAL_INPUTS_MISSING",
+    "ts_syntax_errors": 0,
+    "ts_syntax_files": 59,
+    "worker_archives_packaged": "PASS"
+  },
+  "user_rule": "NO_DIRECT_GITHUB_PUSH_OR_DEPLOY",
+  "zip_path": "MonsoonRoute_P4_Full_Codebase_Offline_2026-10-10.zip"
+}
