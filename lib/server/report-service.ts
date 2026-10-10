@@ -9,7 +9,7 @@ import {MAX_PHOTO_BYTES} from '@/packages/config/constants';
 
 type Draft=z.infer<typeof ReportDraftInput>;
 const BUCKET='report-photos';
-function digest(input:string){return createHash('sha256').update(input).digest('hex')}
+function digest(input:string|Buffer){return createHash('sha256').update(input).digest('hex')}
 function quotaSubject(userId:string){const key=process.env.RATE_LIMIT_HMAC_KEY;if(!key||key.length<32)throw new ApiError(503,'BACKEND_UNAVAILABLE');return createHmac('sha256',key).update('report:'+userId).digest('hex')}
 function isUuid(value:string){return /^[a-f\d]{8}-[a-f\d]{4}-[1-8][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}$/i.test(value)}
 export async function createDraft(actor:string,input:Draft){

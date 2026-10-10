@@ -6,7 +6,7 @@ import type {RouteDecision} from '@/packages/engine/index';
 const MapCanvas=dynamic(()=>import('./MapCanvas'),{ssr:false,loading:()=> <div className="map">Loading interactive map…</div>});
 type Point={lat:number;lon:number};
 type State={origin:Point;destination:Point;detour:number;horizon:0|1|3;busy:boolean;message:string;result:RouteDecision|null;demo:boolean;save:boolean};
-type Action={type:'origin'|'destination';value:Point}|{type:'detour'|'horizon';value:number}|{type:'busy'|'demo';value:boolean}|{type:'message';value:string}|{type:'result';value:RouteDecision|null};
+type Action={type:'origin'|'destination';value:Point}|{type:'detour';value:number}|{type:'horizon';value:0|1|3}|{type:'busy'|'demo'|'save';value:boolean}|{type:'message';value:string}|{type:'result';value:RouteDecision|null};
 const initial:State={origin:{lat:28.62396,lon:77.209},destination:{lat:28.62396,lon:77.2109},detour:.3,horizon:0,busy:false,message:'',result:null,demo:true,save:false};
 function reducer(s:State,a:Action):State{switch(a.type){case'origin':case'destination':return {...s,[a.type]:a.value,result:null};case'detour':return {...s,detour:a.value,result:null};case'horizon':return {...s,horizon:a.value,result:null};case'demo':return {...s,demo:a.value,result:null,message:'',save:false};case'save':return {...s,save:a.value};case'busy':return {...s,busy:a.value};case'message':return {...s,message:a.value};case'result':return {...s,result:a.value}}}
 export default function Planner(){const [s,dispatch]=useReducer(reducer,initial);const [pointTarget,setPointTarget]=useState<'origin'|'destination'>('origin');const previous=useRef<AbortController|null>(null);const serial=useRef(0);useEffect(()=>()=>previous.current?.abort(),[]);
