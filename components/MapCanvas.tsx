@@ -11,7 +11,7 @@ function features(origin:Point,destination:Point,result:RouteDecision|null):GeoJ
   return {type:'FeatureCollection',features:markers};
 }
 export default function MapCanvas({onPick,demo,origin,destination,result}:{onPick?:(p:Point)=>void;demo:boolean;origin:Point;destination:Point;result:RouteDecision|null}){
-  const container=useRef<HTMLDivElement>(null);const mapRef=useRef<MaplibreMap|null>(null);const pick=useRef(onPick);pick.current=onPick;
+  const container=useRef<HTMLDivElement>(null);const mapRef=useRef<MaplibreMap|null>(null);const pick=useRef(onPick);useEffect(()=>{pick.current=onPick},[onPick]);
   useEffect(()=>{if(!container.current)return;let cancelled=false;let map:MaplibreMap|null=null;import('maplibre-gl').then(({default:lib})=>{
     if(cancelled||!container.current)return;
     map=new lib.Map({container:container.current,style:{version:8,sources:{},layers:[{id:'background',type:'background',paint:{'background-color':'#e4f1ee'}}]},center:[77.2100,28.6243],zoom:14.5,minZoom:11,maxZoom:17,attributionControl:false});mapRef.current=map;
