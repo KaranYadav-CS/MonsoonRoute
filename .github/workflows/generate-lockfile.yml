@@ -41,9 +41,7 @@ jobs:
             echo "Lockfile already tracked; no mutation."
             exit 0
           fi
-          encoded="$(base64 -w0 package-lock.json)"
-          gh api -X PUT repos/KaranYadav-CS/MonsoonRoute/contents/package-lock.json \
-            -f message='build(lock): commit CI-verified dependency graph' \
-            -f content="$encoded" \
-            -f branch='main' >/dev/null
+          node --input-type=module -e "import fs from 'node:fs';const payload={message:'build(lock): commit CI-verified dependency graph',content:fs.readFileSync('package-lock.json').toString('base64'),branch:'main'};fs.writeFileSync('/tmp/monsoonroute-lock-request.json',JSON.stringify(payload),{mode:0o600});"
+          gh api -X PUT repos/KaranYadav-CS/MonsoonRoute/contents/package-lock.json --input /tmp/monsoonroute-lock-request.json >/dev/null
+          rm -f /tmp/monsoonroute-lock-request.json
           echo "Lockfile committed; latest branch must be validated by CI."
