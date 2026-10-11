@@ -19,3 +19,17 @@ test('live guidance stays unavailable without reviewed graph and backend',async(
   await expect(page.getByText(/LIVE FLOOD RISK UNAVAILABLE/)).toHaveCount(0);
   await expect(page.getByText(/NOT FOR NAVIGATION/).first()).toBeVisible();
 });
+
+test('WhatsApp preview share link points to the deployed, explicitly non-navigational research page',async({page})=>{
+  await page.goto('/plan');
+  const share=page.getByRole('link',{name:/Share this research preview on WhatsApp/});
+  await expect(share).toBeVisible();
+  const href=await share.getAttribute('href');
+  expect(href).toBeTruthy();
+  const url=new URL(href!);
+  expect(url.hostname).toBe('wa.me');
+  const message=url.searchParams.get('text')??'';
+  expect(message).toContain('not verified navigation');
+  expect(message).toContain('https://monsoon-route-omega.vercel.app/plan');
+  await expect(share).toHaveAttribute('rel',/noopener noreferrer/);
+});
