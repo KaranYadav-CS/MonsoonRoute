@@ -1,1 +1,1 @@
-import AuthForm from '@/components/AuthForm';export default function SignUp(){return <main className="container pageHero"><h1>Sign up</h1><AuthForm mode="signup"/></main>}
+import AuthForm from '@/components/AuthForm';export default async function SignUp({searchParams}:{searchParams:Promise<{next?:string}>}){const p=await searchParams;return <main className="container pageHero"><h1>Sign up</h1><AuthForm mode="signup" next={p.next}/></main>}

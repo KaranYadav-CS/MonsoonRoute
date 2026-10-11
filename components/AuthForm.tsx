@@ -51,7 +51,7 @@ export default function AuthForm({mode,next='/account'}:{mode:Mode;next?:string}
    <button type="submit" className="btn" disabled={busy}>{busy?'Please wait…':({login:'Log in',signup:'Create account',forgot:'Send reset link',update:'Update password'}[mode])}</button>
   </form>
   {message&&<p role="status" className={'notice '+(success?'':'warning')}>{message}</p>}
-  <div className="authLinks">{mode!=='login'&&<Link href="/auth/login">Log in</Link>}{mode!=='signup'&&<Link href="/auth/signup">Create an account</Link>}{mode==='login'&&<Link href="/auth/forgot-password">Forgot password?</Link>}</div>
+  <div className="authLinks">{mode!=='login'&&<Link href="/auth/login">Log in</Link>}{mode!=='signup'&&<Link href={'/auth/signup?next='+encodeURIComponent(destination)}>Create an account</Link>}{mode==='login'&&<Link href="/auth/forgot-password">Forgot password?</Link>}</div>
   <p className="muted small">Flood reports are reviewed by people. An image classification never closes a road automatically.</p>
  </div>;
 }
