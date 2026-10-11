@@ -40,6 +40,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Install audited OSM clipping utility for Geofabrik fallback
+        run: sudo apt-get update -qq && sudo apt-get install -y osmium-tool
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with: {persist-credentials: false}
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -65,7 +67,15 @@ jobs:
                   used=endpoint
                   break
               except Exception as e:last_error=type(e).__name__;source=None
-          if source is None:raise RuntimeError('OSM_CAPTURE_UNAVAILABLE:'+last_error)
+          if source is None:
+              import subprocess
+              geofabrik='https://download.geofabrik.de/asia/india/northern-zone-latest.osm.pbf'
+              subprocess.run(['curl','--fail','--location','--retry','2','--max-time','240',geofabrik,'-o','/tmp/zone.osm.pbf'],check=True)
+              subprocess.run(['osmium','extract','--bbox','77.190,28.600,77.245,28.655','--strategy','complete_ways','--output','/tmp/central.osm.pbf','/tmp/zone.osm.pbf'],check=True)
+              subprocess.run(['osmium','cat','/tmp/central.osm.pbf','--output','/tmp/central.osm','--output-format','osm'],check=True)
+              source=pathlib.Path('/tmp/central.osm').read_bytes()
+              if len(source)>75_000_000 or b'<osm' not in source[:1000]:raise RuntimeError('GEOFABRIK_BOUNDED_SOURCE_TOO_LARGE')
+              used=geofabrik
           stamp=datetime.datetime.now(datetime.timezone.utc).isoformat()
           file=out/'source.osm';file.write_bytes(source)
           graph,manifest=compile_osm(file,stamp)
