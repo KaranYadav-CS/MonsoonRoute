@@ -1,0 +1,84 @@
+name: monsoonroute-public-data-capture
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/public-data-capture.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  weather:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: '3.12'}
+      - name: Capture and validate nine-cell Open-Meteo without DB writes
+        run: |
+          python - <<'PY'
+          import sys,json,pathlib,datetime
+          sys.path.insert(0,'services/weather')
+          from adapters import fetch_archive
+          frames,sha,raw=fetch_archive(timeout=25)
+          ids={x['cell_id'] for x in frames}
+          assert ids==set(range(9)) and len(frames)>=9
+          out=pathlib.Path('artifacts/data-capture/weather');out.mkdir(parents=True,exist_ok=True)
+          (out/'raw.json').write_bytes(raw)
+          meta={'source_url':'https://api.open-meteo.com/v1/forecast','source':'Open-Meteo','sha256':sha,'captured_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'frames':len(frames),'cells':len(ids),'source_license_review':'PENDING','db_published':False,'navigation_ready':False}
+          (out/'manifest.json').write_text(json.dumps(meta,indent=2)+'\n')
+          print('WEATHER_CAPTURE='+json.dumps(meta,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: monsoonroute-openmeteo-unpublished
+          path: artifacts/data-capture/weather/
+          retention-days: 7
+          if-no-files-found: error
+  osm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with: {python-version: '3.12'}
+      - name: Capture OSM drivable roads and restrictions to review-only artifacts
+        run: |
+          python - <<'PY'
+          import datetime,hashlib,json,pathlib,sys,urllib.parse,urllib.request
+          sys.path.insert(0,'scripts')
+          from build_graph import compile_osm,canonical,verify_graph
+          query='[out:xml][timeout:50];(way["highway"~"^(motorway|motorway_link|trunk|trunk_link|primary|primary_link|secondary|secondary_link|tertiary|tertiary_link|residential|unclassified|service|living_street)$"](28.600,77.190,28.655,77.245);relation["type"="restriction"](28.600,77.190,28.655,77.245););(._;>;);out meta;'
+          out=pathlib.Path('artifacts/data-capture/osm');out.mkdir(parents=True,exist_ok=True)
+          endpoints=['https://overpass.kumi.systems/api/interpreter','https://overpass-api.de/api/interpreter']
+          payload=urllib.parse.urlencode({'data':query}).encode()
+          source=None;last_error=''
+          for endpoint in endpoints:
+              try:
+                  req=urllib.request.Request(endpoint,data=payload,headers={'User-Agent':'MonsoonRoute-research/1.0 (bounded Delhi ODbL extraction)','Content-Type':'application/x-www-form-urlencoded'})
+                  with urllib.request.urlopen(req,timeout=80) as response:
+                      if response.status!=200:raise RuntimeError('HTTP_'+str(response.status))
+                      source=response.read(75_000_001)
+                  if len(source)>75_000_000 or b'<osm' not in source[:1000]:raise RuntimeError('OSM_SIZE_OR_FORMAT')
+                  used=endpoint
+                  break
+              except Exception as e:last_error=type(e).__name__;source=None
+          if source is None:raise RuntimeError('OSM_CAPTURE_UNAVAILABLE:'+last_error)
+          stamp=datetime.datetime.now(datetime.timezone.utc).isoformat()
+          file=out/'source.osm';file.write_bytes(source)
+          graph,manifest=compile_osm(file,stamp)
+          nodes,edges=verify_graph(graph)
+          assert nodes>50 and edges>50
+          manifest.update({'capture_endpoint':used,'source_bytes':len(source),'license_signoff':'PENDING_OWNER_REVIEW','publish_ready':False,'database_published':False,'terrain_status':'NOT_ATTACHED'})
+          (out/'graph-preview.json').write_bytes(canonical(graph))
+          (out/'graph-manifest.json').write_bytes(canonical(manifest))
+          print('OSM_PREVIEW='+json.dumps({'source_sha256':manifest['source_sha256'],'graph_sha256':graph['sha256'],'nodes':nodes,'edges':edges,'license_signoff':'PENDING','published':False}))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: monsoonroute-osm-review-required
+          path: artifacts/data-capture/osm/
+          retention-days: 7
+          if-no-files-found: error
