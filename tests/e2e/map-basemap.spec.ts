@@ -39,7 +39,7 @@ test('desktop header links actually navigate to each application route',async({p
   const nav=page.getByRole('navigation',{name:'Main navigation'});
   for(const [label,path,heading] of [
     ['Plan','/plan','Evidence-aware route planning'],
-    ['Report','/report','Submit a road observation'],
+    ['Report','/report','Report a local road condition'],
     ['Review','/review','Review observations'],
     ['History','/history','Saved journeys'],
     ['Methodology','/methodology','Explain the model']
@@ -66,7 +66,7 @@ test('mobile navigation opens, follows links and closes after navigation',async(
   await page.getByRole('navigation',{name:'Main navigation'}).getByRole('link',{name:'Report'}).click();
   await expect(page).toHaveURL(/\/report$/);
   await expect(page.getByRole('button',{name:'Menu'})).toHaveAttribute('aria-expanded','false');
-  await expect(page.getByRole('link',{name:'Create account'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:/Report a local road condition/})).toBeVisible();
 });
 
 test('supabase email signup, recovery and private report gate are present',async({page})=>{
@@ -123,8 +123,8 @@ test('experimental AWS model page discloses safety boundaries and requires sign 
   await expect(page.getByRole('heading',{name:'Flood image analysis'})).toBeVisible();
   await expect(page.getByRole('heading',{name:/Analyze a flood-scene photo/})).toBeVisible();
   await expect(page.getByText(/No road-safety decision/)).toBeVisible();
-  await expect(page.getByText(/private AWS processing/)).toBeVisible();
-  await expect(page.getByText(/not.*validated.*accuracy/i).first()).toBeVisible();
+  await expect(page.getByText(/Image predictions never create a road closure/)).toBeVisible();
+  await expect(page.getByLabel('Choose a photo (up to 3 MiB)')).toHaveCount(0);
 });
 
 test('mobile navigation reaches private observation and image-analysis pages',async({page})=>{
