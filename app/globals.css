@@ -14,3 +14,6 @@
 .authPanel{max-width:520px;margin:10px auto 70px}
 .authPanel .stack{gap:8px}.authPanel h2{margin-bottom:0}.authLinks{display:flex;gap:20px;flex-wrap:wrap;margin:20px 0}.authLinks a{color:#08708a;font-weight:700}
 @media(max-width:850px){.navToggle{display:inline-flex}.topbar{gap:10px}.topbar nav{order:3;flex-basis:100%;margin:0;gap:4px}.topbar nav.navCollapsed{display:none}.topbar nav.navOpen{display:flex;flex-direction:column;align-items:stretch}.topbar nav a{width:100%;padding:9px 12px}.headerTag{display:none}}
+
+.coordsDetails{margin:12px 0 16px;border:1px solid #dae8ec;border-radius:12px;padding:12px;background:#fafdfe}.coordsDetails summary{cursor:pointer;font-weight:700;color:#1d637d}.coordsDetails .formGrid{margin-top:10px}
+.scenarioSwitch{border-color:#c6e0e5;background:#f5fafb}
