@@ -47,7 +47,7 @@ export default function PilotObservationForm(){
    void load();
    const {data:{subscription}}=sb.auth.onAuthStateChange(()=>{void load()});
    return()=>{active=false;subscription.unsubscribe()}
-  }catch{setAuth('unavailable');return()=>{active=false}}
+  }catch{Promise.resolve().then(()=>{if(active)setAuth('unavailable')});return()=>{active=false}}
  },[refresh]);
  async function retryUpload(){
   if(!retry||busy)return;setBusy(true);setMessage('');
