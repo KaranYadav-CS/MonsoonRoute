@@ -1,5 +1,10 @@
-export const runtime='nodejs';
-export const preferredRegion='bom1';
-export const maxDuration=30;
-import {handler} from '@/lib/server/http';import {success,failure,ApiError} from '@/lib/server/errors';import {serviceDB} from '@/lib/server/supabase';import {requireRole} from '@/lib/server/auth';import {originCheck,strictJson} from '@/lib/server/authorization';import {EmptyInput} from '@/packages/contracts';
-export const POST=async(req:Request)=>handler(async()=>{originCheck(req);await requireRole('admin');try{EmptyInput.parse(await strictJson(req))}catch{throw new ApiError(400,'INVALID_INPUT')}throw new ApiError(503,'FEATURE_DISABLED')});
+export const runtime='nodejs';export const preferredRegion='bom1';export const maxDuration=30;
+import {InvokeCommand,LambdaClient} from '@aws-sdk/client-lambda';import {awsCredentialsProvider} from '@vercel/functions/oidc';
+import {handler} from '@/lib/server/http';import {success,ApiError} from '@/lib/server/errors';import {serviceDB} from '@/lib/server/supabase';import {requireRole} from '@/lib/server/auth';import {originCheck,strictJson} from '@/lib/server/authorization';import {EmptyInput} from '@/packages/contracts';import {scopedQuota} from '@/lib/server/quotas';
+export const POST=async(req:Request)=>handler(async()=>{
+ originCheck(req);const user=await requireRole('admin');if(!EmptyInput.safeParse(await strictJson(req)).success)throw new ApiError(400,'INVALID_INPUT');
+ const db=serviceDB(),ctx=await db.rpc('backend_context',{p_actor:user.id});if(ctx.error)throw new ApiError(503,'BACKEND_UNAVAILABLE');if(process.env.AWS_ENABLED!=='true'||!ctx.data.flags.aws_enabled||!ctx.data.flags.weather_ingest_enabled)throw new ApiError(503,'FEATURE_DISABLED');
+ await scopedQuota('global:weather_refresh','weather_manual_refresh',1,300);
+ const role=process.env.AWS_ROLE_ARN,fn=process.env.AWS_INGEST_FUNCTION_ARN;if(role!=='arn:aws:iam::043063712559:role/monsoonroute-vercel-runtime'||fn!=='arn:aws:lambda:ap-south-1:043063712559:function:monsoonroute-prod-ingest')throw new ApiError(503,'BACKEND_UNAVAILABLE');
+ const client=new LambdaClient({region:'ap-south-1',credentials:awsCredentialsProvider({roleArn:role}),maxAttempts:1});try{const r=await client.send(new InvokeCommand({FunctionName:fn,InvocationType:'Event',Payload:Buffer.from(JSON.stringify({schema_version:'1.0',action:'capture_weather'}))}),{abortSignal:AbortSignal.timeout(5000)});if(r.StatusCode!==202)throw Error('INVOKE_REJECTED');const audit=await db.from('audit_events').insert({event_type:'weather_refresh_requested',actor_id:user.id,entity_id:'delhi-central',details:{}});if(audit.error)throw Error('AUDIT_FAILED');return success({accepted:true},202)}catch{throw new ApiError(503,'BACKEND_UNAVAILABLE')}finally{client.destroy()}
+});
