@@ -1,0 +1,1 @@
+import AuthForm from '@/components/AuthForm';export default async function Login({searchParams}:{searchParams:Promise<{next?:string}>}){const p=await searchParams;return <main className="container pageHero"><h1>Log in</h1><AuthForm mode="login" next={p.next}/></main>}
