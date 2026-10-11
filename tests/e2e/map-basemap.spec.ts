@@ -9,7 +9,7 @@ test('actual Central Delhi basemap is configured and reachable',async({page,requ
   await page.goto('/plan');
   await expect(page.getByRole('heading',{name:/Evidence-aware route planning/})).toBeVisible();
   const map=page.getByRole('application');
-  await expect(map).toContainText('REAL STREET BASEMAP');
+  await expect(map).toContainText('REAL OSM STREET BASEMAP');
   await expect(map).toContainText('LIVE FLOOD RISK UNAVAILABLE');
   await expect(page.getByRole('button',{name:/Compare verified routes/})).toBeVisible();
 });
