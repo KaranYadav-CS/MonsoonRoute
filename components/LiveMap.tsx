@@ -1,5 +1,6 @@
 'use client';
 import {useEffect,useRef} from 'react';
+import {loadMapLibrary} from '@/lib/map-library';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type {Map as MapType,GeoJSONSource} from 'maplibre-gl';
 import type {RouteDecision} from '@/packages/engine/index';
@@ -18,7 +19,7 @@ export default function LiveMap(props:Props){
  useEffect(()=>{
   let stopped=false,map:MapType|null=null,timer:ReturnType<typeof setTimeout>|undefined,controller:AbortController|null=null;
   if(!element.current)return;
-  void import('maplibre-gl').then(async lib=>{
+  void loadMapLibrary().then(async lib=>{
    if(stopped||!element.current)return;
    map=new lib.Map({container:element.current,style:'https://tiles.openfreemap.org/styles/liberty',center:[77.220,28.630],zoom:14.2,minZoom:11,maxZoom:19,attributionControl:{compact:true}});mapRef.current=map;
    map.addControl(new lib.NavigationControl({showCompass:false}),'top-right');
@@ -43,7 +44,7 @@ export default function LiveMap(props:Props){
     map.addLayer({id:'route-outline',type:'line',source:'journey',filter:['in',['get','type'],['literal',['baseline','recommended','alternative','over-budget']]],paint:{'line-color':'#fff','line-width':9,'line-opacity':.95}});
     map.addLayer({id:'routes',type:'line',source:'journey',filter:['in',['get','type'],['literal',['baseline','recommended','alternative','over-budget']]],paint:{'line-color':['match',['get','type'],'recommended','#087e74','alternative','#8b5cf6','over-budget','#b45309','#164e63'],'line-width':['case',['==',['get','type'],'recommended'],6,4.5]}});
     map.addLayer({id:'journey-pins',type:'circle',source:'journey',filter:['in',['get','type'],['literal',['origin','destination']]],paint:{'circle-radius':9,'circle-color':['match',['get','type'],'origin','#087e74','#c65b28'],'circle-stroke-width':3,'circle-stroke-color':'#fff'}});
-    ready.current=true;
+    ready.current=true;element.current?.setAttribute('data-map-ready','true');
     void fetch('/api/v1/config').then(r=>r.json()).then(j=>{if(!stopped&&j.data?.roads_geojson_url&&map?.getSource('network'))(map.getSource('network') as GeoJSONSource).setData(j.data.roads_geojson_url)}).catch(()=>{});
     const refresh=()=>{
      if(stopped||!map||latest.current.demo){(map?.getSource('road-evidence') as GeoJSONSource)?.setData(empty());return}

@@ -6,7 +6,7 @@ from __future__ import annotations
 import os,hashlib,json,uuid,base64,logging,re
 from datetime import datetime,timezone
 from adapters import fetch_archive,WeatherValidationError
-from backend import table_insert,rpc,BackendError
+from backend import source_artifact,rpc,BackendError
 logger=logging.getLogger(__name__)
 
 def publish(frames:list[dict],sha:str,raw:bytes,*,now:datetime|None=None)->dict:
@@ -23,7 +23,7 @@ def publish(frames:list[dict],sha:str,raw:bytes,*,now:datetime|None=None)->dict:
     if head['ContentLength']!=len(raw) or head.get('Metadata',{}).get('sha256')!=sha:raise BackendError('WEATHER_ARCHIVE_VERIFICATION_FAILED')
     now=now or datetime.now(timezone.utc)
     rows=sorted(frames,key=lambda x:(x['cell_id'],x['interval_end']))
-    artifact=table_insert('source_artifacts',{'source_id':'open-meteo-forecast','retrieved_at':now.isoformat(),
+    artifact=source_artifact({'source_id':'open-meteo-forecast','retrieved_at':now.isoformat(),
        'sha256':sha,'object_key':key,'license_review':'approved','metadata':{'archive_backend':'s3','bytes':len(raw),'provider':'open-meteo'}})
     if not artifact.get('id'):raise BackendError('WEATHER_ARTIFACT_NOT_PERSISTED')
     run={'id':str(uuid.uuid4()),'city_id':'delhi-central','artifact_id':artifact['id'],'kind':'forecast',
@@ -37,6 +37,9 @@ def publish(frames:list[dict],sha:str,raw:bytes,*,now:datetime|None=None)->dict:
 
 def lambda_handler(event,context):
     if os.environ.get('WEATHER_INGEST_ENABLED')!='true':return {'status':'disabled','published':False}
+    if not isinstance(event,dict) or event.get('action') not in ('capture_weather',None):raise ValueError('INVALID_WEATHER_EVENT')
+    flags=rpc('backend_context',{}).get('flags',{})
+    if not flags.get('weather_ingest_enabled'):return {'status':'paused','published':False}
     try:
         frames,sha,raw=fetch_archive(timeout=8)
         return publish(frames,sha,raw)

@@ -21,3 +21,5 @@ artifacts/*-import.sql
 data/osm/*.osm
 supabase/.temp/
 *.tsbuildinfo
+
+/public/vendor/maplibre/

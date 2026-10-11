@@ -36,6 +36,10 @@ def fetch_archive(timeout:float=10)->tuple[list[dict],str,bytes]:
         if int(resp.headers.get('Age','0'))>=3600:raise WeatherValidationError('WEATHER_CACHE_EXPIRED')
         raw=resp.read(1_048_577)
     frames,sha=parse_payload(raw)
+    now=datetime.now(timezone.utc);floor=int(now.timestamp()//3600)*3600
+    for cell in range(9):
+        available={int(datetime.fromisoformat(f['interval_end']).timestamp()) for f in frames if f['cell_id']==cell}
+        if not set(range(floor-7200,floor+8*3600,3600)).issubset(available):raise WeatherValidationError('WEATHER_REQUIRED_WINDOWS_MISSING')
     return frames,sha,raw
 
 def fetch(timeout:float=10)->tuple[list[dict],str]:
