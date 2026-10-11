@@ -1,1 +1,13 @@
-{"model_id":"prithivMLmods/Flood-Image-Detection","revision":null,"format":"onnx","status":"NOT_EXPORTED","sha256":null,"preprocessor_sha256":null,"parity_validated":false,"runtime_benchmark_validated":false,"evaluation_accuracy":null,"risk_influence":"NONE","reason":"No pinned model revision/download/export/held-out evaluation was executed during offline P4"}
+{
+  "model_id": "prithivMLmods/Flood-Image-Detection",
+  "revision": "1fb5408d3b778c92c79b3a7894517ce794ad21f7",
+  "source_size": 224,
+  "source_resize": "bilinear",
+  "spec_target_size": 512,
+  "status": "NOT_EXPORTED",
+  "parity_validated": false,
+  "model_sha256": null,
+  "preprocessor_sha256": null,
+  "advisory_only": true,
+  "notes": "The immutable upstream weights define a 224x224 bilinear processor, conflicting with the plan's 512x512 design. Deployment requires actual model artifact, numerical parity, held-out safety evaluation, and AWS CPU checks."
+}
