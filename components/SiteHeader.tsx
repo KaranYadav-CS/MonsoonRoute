@@ -4,7 +4,7 @@ import {usePathname} from 'next/navigation';
 import {useEffect,useState} from 'react';
 import {browserClient} from '@/lib/browser/supabase';
 
-const links=[['/plan','Plan'],['/report','Report'],['/review','Review'],['/history','History'],['/methodology','Methodology']] as const;
+const links=[['/plan','Plan'],['/report','Report'],['/analyze','Analyze'],['/review','Review'],['/history','History'],['/methodology','Methodology']] as const;
 export default function SiteHeader(){
  const pathname=usePathname();
  const [signedIn,setSignedIn]=useState(false);

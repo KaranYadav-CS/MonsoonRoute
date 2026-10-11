@@ -5,7 +5,7 @@ import {useRouter} from 'next/navigation';
 import {browserClient} from '@/lib/browser/supabase';
 
 type Mode='login'|'signup'|'forgot'|'update';
-const allowed=new Set(['/account','/report','/history','/plan']);
+const allowed=new Set(['/account','/report','/history','/plan','/analyze']);
 export default function AuthForm({mode,next='/account'}:{mode:Mode;next?:string}){
  const router=useRouter();const [email,setEmail]=useState('');const [password,setPassword]=useState('');const [confirm,setConfirm]=useState('');
  const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');const [success,setSuccess]=useState(false);
