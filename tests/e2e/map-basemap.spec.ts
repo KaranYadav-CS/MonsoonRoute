@@ -108,3 +108,33 @@ test('map point picker advances from origin to destination on real basemap click
   await destinationButton.click();
   await expect(destinationButton).toHaveAttribute('aria-pressed','true');
 });
+
+test('community road observations use a real-location intake, never a fabricated segment ID',async({page})=>{
+  await page.goto('/report');
+  await expect(page.getByRole('heading',{name:/Report a local road condition/})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Report what you observed'})).toBeVisible();
+  await expect(page.getByText(/pending human triage/).first()).toBeVisible();
+  await expect(page.getByText(/fabricated road ID/).first()).toBeVisible();
+  await expect(page.getByText('Community report submission is temporarily unavailable.')).toHaveCount(0);
+});
+
+test('experimental AWS model page discloses safety boundaries and requires sign in',async({page})=>{
+  await page.goto('/analyze');
+  await expect(page.getByRole('heading',{name:'Flood image analysis'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:/Analyze a flood-scene photo/})).toBeVisible();
+  await expect(page.getByText(/No road-safety decision/)).toBeVisible();
+  await expect(page.getByText(/private AWS processing/)).toBeVisible();
+  await expect(page.getByText(/not.*validated.*accuracy/i).first()).toBeVisible();
+});
+
+test('mobile navigation reaches private observation and image-analysis pages',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/');
+  await page.getByRole('button',{name:'Menu'}).click();
+  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('link',{name:'Report'}).click();
+  await expect(page).toHaveURL(/\/report$/);
+  await page.getByRole('button',{name:'Menu'}).click();
+  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('link',{name:'Analyze'}).click();
+  await expect(page).toHaveURL(/\/analyze$/);
+  await expect(page.getByRole('button',{name:'Menu'})).toHaveAttribute('aria-expanded','false');
+});
