@@ -4,25 +4,26 @@ This module never accepts caller-chosen hosts or publishes credentials in logs.
 The deployment service role is retrieved from Secrets Manager at cold start.
 """
 from __future__ import annotations
-import json,os,re,urllib.request,urllib.parse,urllib.error
-from functools import lru_cache
+import json,os,re,time,urllib.request,urllib.parse,urllib.error
 from typing import Any
 
 PROJECT_REF='ihvsazbjhlpylnfeakao'
 BASE='https://'+PROJECT_REF+'.supabase.co'
 _ALLOWED_RESOURCE=re.compile(r'^[a-z][a-z0-9_]{0,63}$')
 class BackendError(RuntimeError):pass
-@lru_cache(maxsize=1)
+_credential_cache=None
 def credentials():
+    global _credential_cache
+    if _credential_cache and time.monotonic()-_credential_cache[0]<300:return _credential_cache[1]
     arn=os.getenv('BACKEND_SECRET_ARN','')
     if not re.fullmatch(r'arn:aws:secretsmanager:ap-south-1:043063712559:secret:monsoonroute-[A-Za-z0-9/_+=.@-]+',arn):raise BackendError('BACKEND_SECRET_NOT_CONFIGURED')
     import boto3
     try:
         r=boto3.client('secretsmanager',region_name='ap-south-1').get_secret_value(SecretId=arn)
         obj=json.loads(r['SecretString'])
-        url=obj.get('SUPABASE_URL');key=obj.get('SUPABASE_SERVICE_ROLE_KEY')
+        url=obj.get('supabase_url',obj.get('SUPABASE_URL'));key=obj.get('supabase_service_role_key',obj.get('SUPABASE_SERVICE_ROLE_KEY'))
         if url!=BASE or not isinstance(key,str) or len(key)<30:raise BackendError('BACKEND_SECRET_CONTRACT_INVALID')
-        return key
+        _credential_cache=(time.monotonic(),key);return key
     except BackendError:raise
     except Exception as e:raise BackendError('BACKEND_CREDENTIAL_FETCH_FAILED') from e
 
@@ -79,3 +80,21 @@ def object_put(bucket:str,key:str,image:bytes):
         with urllib.request.urlopen(req,timeout=9) as response:
             if response.status not in (200,201):raise BackendError('STORAGE_UPLOAD_FAILED')
     except urllib.error.HTTPError as e:raise BackendError('STORAGE_UPLOAD_HTTP_'+str(e.code)) from None
+
+def object_remove(key:str):
+    if not re.fullmatch(r'[0-9a-f-]{36}/[0-9a-f-]{36}/(?:original|processed\.jpg)',key):raise BackendError('STORAGE_KEY_INVALID')
+    return request('DELETE','/storage/v1/object/report-photos',{'prefixes':[key]})
+
+def update_row(table:str,criteria:dict,body:dict):
+    if not _ALLOWED_RESOURCE.fullmatch(table):raise BackendError('TABLE_NAME_INVALID')
+    query=urllib.parse.urlencode({k:'eq.'+str(v) for k,v in criteria.items()})
+    return request('PATCH','/rest/v1/'+table+'?'+query,body)
+
+def source_artifact(body:dict):
+    existing=table_one('source_artifacts',{'source_id':body['source_id'],'sha256':body['sha256']})
+    if existing:return existing
+    try:return table_insert('source_artifacts',body)
+    except BackendError:
+        existing=table_one('source_artifacts',{'source_id':body['source_id'],'sha256':body['sha256']})
+        if existing:return existing
+        raise

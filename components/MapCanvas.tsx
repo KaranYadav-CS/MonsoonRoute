@@ -12,7 +12,7 @@ function features(origin:Point,destination:Point,result:RouteDecision|null):GeoJ
 }
 export default function MapCanvas({onPick,demo,origin,destination,result}:{onPick?:(p:Point)=>void;demo:boolean;origin:Point;destination:Point;result:RouteDecision|null}){
   const container=useRef<HTMLDivElement>(null);const mapRef=useRef<MaplibreMap|null>(null);const pick=useRef(onPick);useEffect(()=>{pick.current=onPick},[onPick]);
-  useEffect(()=>{if(!container.current)return;let cancelled=false;let map:MaplibreMap|null=null;import('maplibre-gl').then(({default:lib})=>{
+  useEffect(()=>{if(!container.current)return;let cancelled=false;let map:MaplibreMap|null=null;import('maplibre-gl').then(lib=>{
     if(cancelled||!container.current)return;
     map=new lib.Map({container:container.current,style:'https://tiles.openfreemap.org/styles/liberty',center:[77.2100,28.6243],zoom:14.5,minZoom:11,maxZoom:17,attributionControl:{compact:true}});mapRef.current=map;
     map.addControl(new lib.NavigationControl({showCompass:false}),'top-right');map.on('click',e=>pick.current?.({lat:e.lngLat.lat,lon:e.lngLat.lng}));map.on('load',()=>{

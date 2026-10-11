@@ -41,10 +41,10 @@ def predict(data):
  from PIL import Image,ImageOps,UnidentifiedImageError
  global SESSION
  if len(data)>OBJECT_SIZE_MAX or not data:raise ValueError("IMAGE_SIZE_REJECTED")
- Image.MAX_IMAGE_PIXELS=12_000_000
+ Image.MAX_IMAGE_PIXELS=4_000_000
  try:
   with Image.open(io.BytesIO(data)) as im:
-   if im.format not in ("PNG","JPEG","WEBP") or im.width*im.height>12_000_000:raise ValueError("IMAGE_FORMAT_REJECTED")
+   if im.format not in ("PNG","JPEG","WEBP") or im.width*im.height>4_000_000 or getattr(im,'n_frames',1)>1:raise ValueError("IMAGE_FORMAT_REJECTED")
    pix=ImageOps.exif_transpose(im).convert("RGB").resize((224,224),Image.Resampling.BILINEAR)
    a=np.asarray(pix,dtype=np.float32).transpose(2,0,1)
  except (UnidentifiedImageError,OSError) as exc:raise ValueError("IMAGE_DECODE_REJECTED") from exc
@@ -58,7 +58,8 @@ def predict(data):
  prob=np.exp(scores-scores.max());prob/=prob.sum()
  cls=int(prob.argmax())
  labels=("Flooded Scene","Non Flooded")
- return {"schema_version":"1.0","class_label":labels[cls],"uncalibrated_probability":round(float(prob[cls]),6),"prediction_duration_ms":elapsed,"model_sha256":DIGEST,"model_revision":"1fb5408d3b778c92c79b3a7894517ce794ad21f7","evaluation_approved":False,"routing_usable":False,"disclaimer":"Image-only exploratory prediction; no validated real-world accuracy, road safety, or automatic closure."}
+ flooded=float(prob[0]);advisory='flooded_scene_likely' if flooded>=.8 else 'non_flooded_scene_likely' if flooded<=.2 else 'uncertain'
+ return {"schema_version":"1.0","model_id":"prithivMLmods/Flood-Image-Detection","class_label":labels[cls],"uncalibrated_probability":float(prob[cls]),"scores":{"flooded_scene":flooded,"non_flooded":float(prob[1])},"advisory":advisory,"calibrated":False,"location_verified":False,"depth_estimated":False,"prediction_duration_ms":elapsed,"latency_ms":elapsed,"artifact_sha256":DIGEST,"model_sha256":DIGEST,"model_revision":"1fb5408d3b778c92c79b3a7894517ce794ad21f7","evaluation_approved":False,"routing_usable":False,"disclaimer":"Image-only advisory; no validated road depth, passability or automatic closure."}
 def lambda_handler(event,context):
  import boto3
  if not isinstance(event,dict):raise ValueError("REQUEST_INVALID")
@@ -69,7 +70,7 @@ def lambda_handler(event,context):
   res=predict(data);res["input_kind"]="deterministic_synthetic_smoke";return res
  if mode!="classify_private_s3":raise ValueError("ACTION_NOT_ALLOWED")
  key=event.get("key")
- if not isinstance(key,str) or not re.fullmatch(r"inference-fixtures/[a-zA-Z0-9_-]{1,80}\.(?:jpg|jpeg|png|webp)",key):
+ if not isinstance(key,str) or not re.fullmatch(r"(?:inference-fixtures/[a-zA-Z0-9_-]{1,80}\.(?:jpg|jpeg|png|webp)|user-analysis/[a-f0-9]{32}\.jpg)",key):
   raise ValueError("OBJECT_KEY_REJECTED")
  s3=boto3.client("s3",region_name="ap-south-1")
  response=s3.get_object(Bucket=BUCKET,Key=key)

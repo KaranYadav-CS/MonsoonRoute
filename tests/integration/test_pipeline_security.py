@@ -22,7 +22,7 @@ class SecurityProperties(unittest.TestCase):
  def test_backend_rejects_attacker_url_before_credentials(self):
   with self.assertRaisesRegex(BackendError,'BACKEND_PATH_INVALID'):request('GET','http://evil.invalid/rest/v1/reports')
  def test_no_production_model_claim(self):
-  manifest=json.loads((ROOT/'models/manifest.json').read_text());self.assertFalse(manifest['parity_validated']);self.assertFalse(manifest['runtime_benchmark_validated'])
+  manifest=json.loads((ROOT/'models/manifest.json').read_text());self.assertFalse(manifest['evaluation_approved']);self.assertTrue(manifest['advisory_only']);self.assertTrue(manifest['parity_validated'])
  def test_fixture_is_immutable_and_synthetic(self):
   fixture=json.loads((ROOT/'artifacts/synthetic-scenario.json').read_text());graph=json.loads((ROOT/'artifacts/synthetic-graph.json').read_text())
   self.assertEqual(fixture['kind'],'synthetic');self.assertEqual(fixture['graph_sha256'],graph['sha256']);self.assertIn('not',fixture['disclaimer'].lower())

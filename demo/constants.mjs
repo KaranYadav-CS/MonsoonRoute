@@ -1,4 +1,4 @@
-export const PILOT_BBOX = [77.190, 28.600, 77.245, 28.655];
+export const PILOT_BBOX = [77.200, 28.610, 77.240, 28.650];
 export const CITY_ID = 'delhi-central';
 export const RULESET_ID = 'relative-risk-v1';
 export const MAX_DETOUR = 0.30;

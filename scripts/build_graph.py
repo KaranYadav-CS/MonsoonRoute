@@ -7,9 +7,9 @@ from __future__ import annotations
 import argparse,hashlib,json,math,pathlib,re,xml.etree.ElementTree as ET
 from dataclasses import dataclass
 
-BBOX=(77.190,28.600,77.245,28.655)
+BBOX=(77.200,28.610,77.240,28.650)
 DRIVABLE={'motorway','trunk','primary','secondary','tertiary','residential','unclassified','service','motorway_link','trunk_link','primary_link','secondary_link','tertiary_link','living_street'}
-SPEED={'motorway':70,'trunk':50,'primary':45,'secondary':40,'tertiary':35,'residential':25,'service':15,'living_street':10,'unclassified':25}
+SPEED={'motorway':50,'trunk':50,'primary':35,'secondary':30,'tertiary':25,'residential':20,'service':10,'living_street':10,'unclassified':25}
 
 
 def canonical(v):return json.dumps(v,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()
@@ -28,11 +28,12 @@ def parse_source(path:pathlib.Path):
         for _,elem in ET.iterparse(str(path),events=('end',)):
             if elem.tag=='node':
                 lat=float(elem.attrib['lat']);lon=float(elem.attrib['lon'])
-                if supported(lat,lon):nodes[elem.attrib['id']]=(lat,lon)
+                if BBOX[0]-.010<=lon<=BBOX[2]+.010 and BBOX[1]-.010<=lat<=BBOX[3]+.010:nodes[elem.attrib['id']]=(lat,lon)
                 elem.clear()
             elif elem.tag=='way':
                 tags={x.attrib['k']:x.attrib['v'] for x in elem.findall('tag')}
-                if tags.get('highway') in DRIVABLE and not any(tags.get(x) in ('no','private') for x in ('access','motor_vehicle','motorcar')):
+                access=tags.get('motorcar',tags.get('motor_vehicle',tags.get('access','yes')))
+                if tags.get('highway') in DRIVABLE and tags.get('area')!='yes' and access not in ('no','private'):
                     ways.append((elem.attrib['id'],[x.attrib['ref'] for x in elem.findall('nd')],tags))
                 elem.clear()
             elif elem.tag=='relation':
@@ -44,22 +45,30 @@ def parse_source(path:pathlib.Path):
     except (ET.ParseError,KeyError,ValueError) as e:raise ValueError('OSM_XML_INVALID') from e
     return nodes,sorted(ways,key=lambda x:int(x[0])),relations
 
-def compile_osm(path:pathlib.Path,captured_at:str):
+def compile_osm(path:pathlib.Path,captured_at:str,*,allow_oversize=False):
     from datetime import datetime
     try:datetime.fromisoformat(captured_at.replace('Z','+00:00'))
     except ValueError as e:raise ValueError('CAPTURE_TIMESTAMP_INVALID') from e
     source_sha=hashlib.sha256(path.read_bytes()).hexdigest()
     src,ways,relations=parse_source(path)
-    nodes={};edges=[];first_last={};warnings=[]
+    nodes={};edges=[];first_last={};warnings=[];excluded=set()
+    for rel_id,tags,members in relations:
+        if any(':conditional' in k for k in tags) or any(m[0]=='way' and m[1]=='via' for m in members):
+            excluded.update(m[2] for m in members if m[0]=='way')
+            warnings.append({'relation_id':rel_id,'reason':'UNSUPPORTED_RESTRICTION_WAYS_EXCLUDED'})
     def add_node(k,p):nodes[k]={'id':k,'lat':round(p[0],8),'lon':round(p[1],8)}
     for way_id,refs,tags in ways:
+        if way_id in excluded or any(':conditional' in k for k in tags):continue
+        direction=tags.get('oneway:motorcar',tags.get('oneway:motor_vehicle',tags.get('oneway')))
+        if direction not in (None,'yes','true','1','-1','no','false','0'):
+            warnings.append({'way_id':way_id,'reason':'UNKNOWN_DIRECTION_EXCLUDED'});continue
         highway=tags['highway'];speed=SPEED.get(highway.replace('_link',''),25)
         numeric=re.search(r'\d+(?:\.\d+)?',tags.get('maxspeed',''))
         if numeric:
             claimed=float(numeric.group());speed=min(speed,claimed*(1.609344 if 'mph' in tags['maxspeed'] else 1))
-        speed=max(5,speed)
-        reverse=tags.get('oneway')=='-1'
-        oneway=reverse or tags.get('oneway') in ('yes','true','1') or tags.get('junction')=='roundabout' or highway in ('motorway','motorway_link')
+        speed=max(5,min(80,speed))
+        reverse=direction=='-1'
+        oneway=reverse or direction in ('yes','true','1') or (direction is None and (tags.get('junction')=='roundabout' or highway in ('motorway','motorway_link')))
         for i,(start,end) in enumerate(zip(refs,refs[1:])):
             if start not in src or end not in src or start==end:continue
             a,b=src[start],src[end];distance=haversine(a,b)
@@ -78,21 +87,39 @@ def compile_osm(path:pathlib.Path,captured_at:str):
                     if length>105:raise ValueError('RESAMPLED_EDGE_TOO_LONG')
                     identity=f'{way_id}:{i}:{fr}:{to}'
                     edge={'id':identity,'from':fr,'to':to,'length_m':round(length,3),'time_s':round(length/(speed*1000/3600),3),
-                          'hotspot_factor':0,'depression_factor':None,'underpass':tags.get('tunnel')=='yes',
+                          'hotspot_factor':0,'depression_factor':None,'underpass':tags.get('tunnel') not in (None,'no','false','0'),
                           'terrain_valid':False,'physical_key':f'{way_id}:{i}:{min(fr,to)}:{max(fr,to)}',
                           'osm_way_id':int(way_id),'name':tags.get('name'), 'highway':highway,
                           'tags':{k:v for k,v in tags.items() if k in ('name','highway','oneway','surface','bridge','tunnel','layer')},
                           'geom':[[p['lon'],p['lat']],[q['lon'],q['lat']]]}
+                    edge['time_s']=round(length/(speed*1000/3600)+2,6)
                     edges.append(edge);first_last.setdefault(way_id,[]).append(edge)
-    if not edges or len(nodes)>15000 or len(edges)>20000:raise ValueError('GRAPH_BOUNDS_UNSUPPORTED')
+    # Keep the largest actual weak component; proximity never joins carriageways.
+    adjacent={}
+    for edge in edges:
+        adjacent.setdefault(edge['from'],set()).add(edge['to']);adjacent.setdefault(edge['to'],set()).add(edge['from'])
+    unseen=set(adjacent);components=[]
+    while unseen:
+        start=min(unseen);stack=[start];component=set()
+        while stack:
+            node=stack.pop()
+            if node in component:continue
+            component.add(node);unseen.discard(node);stack.extend(adjacent[node]-component)
+        components.append(component)
+    retained=max(components,key=lambda c:(len(c),min(c))) if components else set()
+    edges=[e for e in edges if e['from'] in retained and e['to'] in retained]
+    nodes={k:v for k,v in nodes.items() if k in retained}
+    first_last={w:[e for e in es if e['from'] in retained and e['to'] in retained] for w,es in first_last.items()}
+    if not edges or (not allow_oversize and (len(nodes)>15000 or len(edges)>20000)):raise ValueError(f'GRAPH_BOUNDS_UNSUPPORTED nodes={len(nodes)} edges={len(edges)}')
     turn_restrictions=[];seen=set()
     for rel_id,tags,members in relations:
+        if any(m[2] in excluded for m in members if m[0]=='way') or 'motorcar' in tags.get('except','').split(';'):continue
         if any(m[0]=='way' and m[1]=='via' for m in members):
             warnings.append({'relation_id':rel_id,'reason':'VIA_WAY_UNSUPPORTED'});continue
         frm=next((m[2] for m in members if m[0]=='way' and m[1]=='from'),None)
         to=next((m[2] for m in members if m[0]=='way' and m[1]=='to'),None)
         via=next((m[2] for m in members if m[0]=='node' and m[1]=='via'),None)
-        rt=tags.get('restriction','');via_key=f'osm:{via}'
+        rt=tags.get('restriction:motorcar',tags.get('restriction:motor_vehicle',tags.get('restriction','')));via_key=f'osm:{via}'
         if not frm or not to or not via or not (rt.startswith('no_') or rt.startswith('only_')):
             warnings.append({'relation_id':rel_id,'reason':'RESTRICTION_UNSUPPORTED'});continue
         incoming=[e for e in first_last.get(frm,[]) if e['to']==via_key]
@@ -113,7 +140,7 @@ def compile_osm(path:pathlib.Path,captured_at:str):
     manifest={'schema_version':'1.0','kind':'osm_review_required','source_sha256':source_sha,'compiled_graph_sha256':digest,'captured_at':captured_at,
               'osm_contributors':'https://www.openstreetmap.org/copyright','license':'ODbL 1.0','node_count':len(nodes),
               'edge_count':len(edges),'turn_restriction_count':len(turn_restrictions),'unresolved_restrictions':warnings,
-              'terrain_status':'NOT_ATTACHED','hotspot_status':'NOT_ATTACHED','publish_ready':False}
+              'terrain_status':'NOT_ATTACHED','hotspot_status':'NOT_ATTACHED','supported_bbox':list(BBOX),'publish_ready':False}
     return {**payload,'sha256':digest},manifest
 
 def verify_graph(graph):

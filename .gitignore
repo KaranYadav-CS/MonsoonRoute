@@ -12,3 +12,12 @@ playwright-report/
 test-results/
 *.zip
 .DS_Store
+.venv/
+.state/
+.secrets/
+data/osm/*.json
+data/terrain/
+artifacts/*-import.sql
+data/osm/*.osm
+supabase/.temp/
+*.tsbuildinfo

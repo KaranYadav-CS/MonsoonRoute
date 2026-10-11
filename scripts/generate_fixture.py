@@ -28,7 +28,7 @@ def build():
         length=round(((a['lat']-b['lat'])*111320)**2+((a['lon']-b['lon'])*97730)**2,2)**.5
         length=round(length,3)
         edges.append({'id':f'{fr}__{to}','from':fr,'to':to,'length_m':length,
-          'time_s':round(length/8.5*(1.15 if central else 1),3),
+          'time_s':round(length/8.5*(1.4 if central else 1)+2,3),
           'hotspot_factor':.87 if high else (.20 if central else .03),
           'depression_factor':.7 if high else .15,
           'underpass':underpass,'terrain_valid':False,

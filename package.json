@@ -8,10 +8,10 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/bootstrap_backend_secret.mjs",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/unit/*.test.mjs tests/security/*.test.mjs",
     "check": "npm run lint && npm run typecheck && npm run test",
     "check:artifacts": "python scripts/check_artifacts.py",
@@ -23,26 +23,27 @@
     "check:browser": "python scripts/verify_demo_browser.py"
   },
   "dependencies": {
+    "@aws-sdk/client-lambda": "3.1149.0",
+    "@aws-sdk/client-s3": "3.1149.0",
+    "@aws-sdk/client-secrets-manager": "3.1149.0",
+    "@aws-sdk/client-sqs": "3.1149.0",
     "@supabase/ssr": "0.7.0",
     "@supabase/supabase-js": "2.57.4",
     "@vercel/functions": "3.9.9",
-    "@aws-sdk/client-s3": "3.893.0",
-    "@aws-sdk/client-sqs": "3.893.0",
-    "@aws-sdk/client-lambda": "3.893.0",
-    "maplibre-gl": "5.7.3",
+    "maplibre-gl": "6.14.0",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "sharp": "0.34.4",
+    "sharp": "0.35.5",
     "zod": "4.1.11"
   },
   "devDependencies": {
+    "@playwright/test": "1.56.0",
     "@types/node": "22.18.6",
     "@types/react": "19.2.1",
     "@types/react-dom": "19.2.1",
     "eslint": "9.36.0",
     "eslint-config-next": "16.4.0",
-    "typescript": "5.9.3",
-    "@playwright/test": "1.56.0"
+    "typescript": "5.9.3"
   }
 }

@@ -8,7 +8,7 @@ export default function PilotPointPicker({point,onPick}:{point:Point|null;onPick
  const change=useRef(onPick);
  useEffect(()=>{change.current=onPick},[onPick]);
  useEffect(()=>{if(!element.current)return;let disposed=false;let instance:MaplibreMap|null=null;
-  void import('maplibre-gl').then(({default:lib})=>{
+  void import('maplibre-gl').then(lib=>{
    if(disposed||!element.current)return;
    instance=new lib.Map({container:element.current,style:'https://tiles.openfreemap.org/styles/liberty',center:[77.215,28.630],zoom:13.3,minZoom:11,maxZoom:17,attributionControl:{compact:true}});
    map.current=instance;
@@ -17,7 +17,7 @@ export default function PilotPointPicker({point,onPick}:{point:Point|null;onPick
   }).catch(()=>{});
   return()=>{disposed=true;instance?.remove();map.current=null;marker.current=null};
  },[]);
- useEffect(()=>{const m=map.current;if(!m||!point)return;void import('maplibre-gl').then(({default:lib})=>{
+ useEffect(()=>{const m=map.current;if(!m||!point)return;void import('maplibre-gl').then(lib=>{
   if(map.current!==m)return;
   if(!marker.current)marker.current=new lib.Marker({color:'#098a84'}).setLngLat([point.lon,point.lat]).addTo(m);
   else marker.current.setLngLat([point.lon,point.lat]);
