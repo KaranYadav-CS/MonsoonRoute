@@ -10,14 +10,14 @@ test('actual Central Delhi basemap is configured and reachable',async({page,requ
   await expect(page.getByRole('heading',{name:/Evidence-aware route planning/})).toBeVisible();
   const map=page.getByRole('application');
   await expect(map).toContainText('REAL STREET BASEMAP');
-  await expect(map).toContainText('NOT FOR NAVIGATION');
-  await expect(page.getByRole('button',{name:/Compare routes/})).toBeVisible();
+  await expect(map).toContainText('LIVE FLOOD RISK UNAVAILABLE');
+  await expect(page.getByRole('button',{name:/Compare verified routes/})).toBeVisible();
 });
 
 test('live guidance stays unavailable without reviewed graph and backend',async({page})=>{
   await page.goto('/plan');
-  await expect(page.getByText(/LIVE FLOOD RISK UNAVAILABLE/)).toHaveCount(0);
-  await expect(page.getByText(/NOT FOR NAVIGATION/).first()).toBeVisible();
+  await expect(page.getByText(/LIVE FLOOD RISK UNAVAILABLE/).first()).toBeVisible();
+  await expect(page.getByRole('button',{name:/Compare verified routes/})).toBeDisabled();
 });
 
 test('WhatsApp preview share link points to the deployed, explicitly non-navigational research page',async({page})=>{
@@ -32,4 +32,61 @@ test('WhatsApp preview share link points to the deployed, explicitly non-navigat
   expect(message).toContain('not verified navigation');
   expect(message).toContain('https://monsoon-route-omega.vercel.app/plan');
   await expect(share).toHaveAttribute('rel',/noopener noreferrer/);
+});
+
+test('desktop header links actually navigate to each application route',async({page})=>{
+  await page.goto('/');
+  const nav=page.getByRole('navigation',{name:'Main navigation'});
+  for(const [label,path,heading] of [
+    ['Plan','/plan','Evidence-aware route planning'],
+    ['Report','/report','Submit a road observation'],
+    ['Review','/review','Review observations'],
+    ['History','/history','Saved journeys'],
+    ['Methodology','/methodology','Explain the model']
+  ] as const){
+    await nav.getByRole('link',{name:label,exact:true}).click();
+    await expect(page).toHaveURL(new RegExp(path+'$'));
+    await expect(page.getByRole('heading',{name:new RegExp(heading)})).toBeVisible();
+    await expect(nav.getByRole('link',{name:label,exact:true})).toHaveAttribute('aria-current','page');
+  }
+  await nav.getByRole('link',{name:'Log in / Sign up'}).click();
+  await expect(page).toHaveURL(/\/auth\/login$/);
+  await expect(page.getByLabel('Email address')).toBeVisible();
+  await expect(page.getByLabel('Password', {exact:true})).toBeVisible();
+  await expect(page.getByText('Continue with GitHub')).toHaveCount(0);
+});
+
+test('mobile navigation opens, follows links and closes after navigation',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/');
+  const toggle=page.getByRole('button',{name:'Menu'});
+  await expect(toggle).toBeVisible();
+  await toggle.click();
+  await expect(page.getByRole('button',{name:'Close menu'})).toHaveAttribute('aria-expanded','true');
+  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('link',{name:'Report'}).click();
+  await expect(page).toHaveURL(/\/report$/);
+  await expect(page.getByRole('button',{name:'Menu'})).toHaveAttribute('aria-expanded','false');
+  await expect(page.getByRole('link',{name:'Create account'})).toBeVisible();
+});
+
+test('supabase email signup, recovery and private report gate are present',async({page})=>{
+  await page.goto('/auth/signup');
+  await expect(page.getByRole('heading',{name:'Create your account'})).toBeVisible();
+  await expect(page.getByLabel('Email address')).toBeVisible();
+  await expect(page.getByLabel('Confirm password')).toBeVisible();
+  await page.goto('/auth/forgot-password');
+  await expect(page.getByRole('button',{name:'Send reset link'})).toBeVisible();
+  await page.goto('/report');
+  await expect(page.getByText('Continue with GitHub')).toHaveCount(0);
+});
+
+test('real map is default and simulated learning routes require explicit opt-in',async({page})=>{
+  await page.goto('/plan');
+  await expect(page.getByRole('heading',{name:/Real Central Delhi map/})).toBeVisible();
+  await expect(page.getByRole('button',{name:/Compare verified routes/})).toBeDisabled();
+  await expect(page.getByText(/Real flood-risk routing is not yet available/)).toBeVisible();
+  const checkbox=page.getByRole('checkbox',{name:/Optional: synthetic teaching exercise/});
+  await checkbox.check();
+  await expect(page.getByRole('button',{name:'Run synthetic comparison'})).toBeEnabled();
+  await expect(page.getByText(/Artificial streets and hypothetical rainfall/)).toBeVisible();
 });
