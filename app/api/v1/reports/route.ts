@@ -1,3 +1,0 @@
-export const runtime='nodejs';export const preferredRegion='bom1';export const maxDuration=30;
-import {handler} from '@/lib/server/http';import {success,ApiError} from '@/lib/server/errors';import {requireUser} from '@/lib/server/auth';import {strictJson,originCheck} from '@/lib/server/authorization';import {ReportDraftInput} from '@/packages/contracts';import {createDraft} from '@/lib/server/report-service';import {quota} from '@/lib/server/quotas';
-export const POST=async(req:Request)=>handler(async()=>{originCheck(req);const user=await requireUser();let input;try{input=ReportDraftInput.parse(await strictJson(req))}catch{throw new ApiError(400,'INVALID_INPUT')}await quota(req,'report_ip_hour',20,3600,user.id);return success(await createDraft(user.id,input),201)});

@@ -1,2 +1,0 @@
-import ReportStatus from '@/components/ReportStatus';
-export default async function ReportDetail({params}:{params:Promise<{id:string}>}){const {id}=await params;return <section className="container pageHero"><span className="eyebrow">Private evidence</span><h1>Report status</h1><p>Access is limited to the authenticated owner. A reviewer may issue a time-bound decision only after explicit evidence review.</p><p className="mono small">Reference: {id.replace(/[^a-zA-Z0-9-]/g,'')}</p><section className="centerCard"><ReportStatus id={id}/></section></section>}

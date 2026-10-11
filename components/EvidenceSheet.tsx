@@ -1,1 +1,0 @@
-export default function EvidenceSheet(){return <aside className="mutedBox" aria-label="Evidence limits"><strong>What the index does not mean</strong><p className="small">This is a relative engineering index, not the probability of flooding, water depth or a certified crossing. Missing weather or stale evidence causes abstention.</p></aside>}

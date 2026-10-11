@@ -1,5 +1,0 @@
-export const runtime='nodejs';
-export const preferredRegion='bom1';
-export const maxDuration=30;
-import {handler} from '@/lib/server/http';import {success,failure,ApiError} from '@/lib/server/errors';import {serviceDB} from '@/lib/server/supabase';import {requireUser} from '@/lib/server/auth';import {Id} from '@/packages/contracts';
-export const GET=async(_req:Request,{params}:{params:Promise<{id:string}>})=>handler(async()=>{const {id}=await params;if(!Id.safeParse(id).success)throw new ApiError(400,'INVALID_INPUT');const u=await requireUser();const {data,error}=await serviceDB().from('vision_jobs').select('id,state,attempts,error_code,created_at,updated_at,report_id,reports!inner(user_id)').eq('id',id).eq('reports.user_id',u.id).maybeSingle();if(error)throw new ApiError(503,'BACKEND_UNAVAILABLE');if(!data)throw new ApiError(404,'NOT_FOUND');return success({id:data.id,state:data.state,attempts:data.attempts,error_code:data.error_code,created_at:data.created_at,updated_at:data.updated_at})});

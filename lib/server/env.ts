@@ -1,4 +1,0 @@
-import {z} from 'zod';
-const S=z.object({APP_ENV:z.enum(['local','staging','production']).default('local'),AWS_ENABLED:z.enum(['true','false']).default('false'),FIXTURE_MODE:z.enum(['true','false']).default('false'),SUPABASE_URL:z.string().url().optional(),SUPABASE_SERVICE_ROLE_KEY:z.string().min(30).optional(),NEXT_PUBLIC_SUPABASE_URL:z.string().url().optional(),NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:z.string().optional(),RATE_LIMIT_HMAC_KEY:z.string().min(32).optional(),AWS_REGION:z.literal('ap-south-1').default('ap-south-1'),BUILD_SHA:z.string().default('unreleased')});
-export function env(){const e=S.parse(process.env);if(e.APP_ENV==='production'&&e.FIXTURE_MODE==='true')throw new Error('PRODUCTION_FIXTURE_FORBIDDEN');return e}
-export function backendReady(){const e=env();return !!(e.SUPABASE_URL&&e.SUPABASE_SERVICE_ROLE_KEY&&e.RATE_LIMIT_HMAC_KEY)}
