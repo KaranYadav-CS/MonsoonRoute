@@ -32,6 +32,7 @@ export default function SiteHeader(){
  const pathname=usePathname();
  const [signedIn,setSignedIn]=useState(false);
  const [menuOpen,setMenuOpen]=useState(false);
+ useEffect(()=>{const onKeyDown=(event:KeyboardEvent)=>{if(event.key==='Escape')setMenuOpen(false)};window.addEventListener('keydown',onKeyDown);return()=>window.removeEventListener('keydown',onKeyDown)},[]);
  useEffect(()=>{let active=true;try{
   const client=browserClient();
   void client.auth.getUser().then(({data})=>{if(active)setSignedIn(Boolean(data.user))}).catch(()=>{});
@@ -43,7 +44,7 @@ export default function SiteHeader(){
  return <>
   {isHome?<header className="ui-landing-nav">
    <Link href="/" className="ui-landing-brand" aria-label="MonsoonRoute home"><img src="/ui/logo-white.webp" alt="MonsoonRoute" width="170" height="56"/></Link>
-   <button type="button" className="ui-menu-btn" onClick={()=>setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-controls="site-navigation">{menuOpen?'Close':'Menu'} <span aria-hidden="true">☰</span></button>
+   <button type="button" className="ui-menu-btn" onClick={()=>setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-controls="site-navigation"><span>{menuOpen?'Close menu':'Menu'}</span> <span aria-hidden="true">{menuOpen?'×':'☰'}</span></button>
    <nav id="site-navigation" className={menuOpen?'ui-landing-links is-open':'ui-landing-links'} aria-label="Main navigation">
     <Link href="/" aria-current="page" onClick={()=>setMenuOpen(false)}>Home</Link>
     <a href="#features" onClick={()=>setMenuOpen(false)}>Features</a>
@@ -54,10 +55,10 @@ export default function SiteHeader(){
     {!signedIn&&<Link className="ui-nav-signup" href="/auth/signup" onClick={()=>setMenuOpen(false)}>Sign up</Link>}
    </nav>
   </header>:
-  <><header className="ui-mobile-top"><button type="button" className="ui-menu-btn" onClick={()=>setMenuOpen(!menuOpen)} aria-controls="site-navigation" aria-expanded={menuOpen} aria-label={menuOpen?'Close navigation':'Open navigation'}>☰ <span>Menu</span></button><Link href="/" className="ui-mobile-brand">Monsoon<span>Route</span></Link><Link href={signedIn?'/account':'/auth/login'} aria-label="Account"><Glyph name="profile"/></Link></header>
+  <><header className="ui-mobile-top"><button type="button" className="ui-menu-btn" onClick={()=>setMenuOpen(!menuOpen)} aria-controls="site-navigation" aria-expanded={menuOpen} aria-label={menuOpen?'Close navigation':'Open navigation'}><span aria-hidden="true">{menuOpen?'×':'☰'}</span> <span>{menuOpen?'Close':'Menu'}</span></button><Link href="/" className="ui-mobile-brand" aria-label="MonsoonRoute home"><img src="/ui/logo.webp" alt="MonsoonRoute" width="170" height="50"/></Link><Link href={signedIn?'/account':'/auth/login'} aria-label="Account"><Glyph name="profile"/></Link></header>
    <aside className={menuOpen?'ui-sidebar is-open':'ui-sidebar'} aria-label="Main navigation">
     <div className="ui-sidebar-top"><Link href="/" className="ui-sidebar-brand" onClick={()=>setMenuOpen(false)}><img src="/ui/logo-white.webp" alt="MonsoonRoute home" width="174" height="58"/></Link><button type="button" className="ui-close-sidebar" onClick={()=>setMenuOpen(false)} aria-label="Close navigation">×</button></div>
-    <nav id="site-navigation" className="ui-sidebar-nav">{navigation.map(item=><Link key={item.href} href={item.href} aria-current={pathname===item.href?'page':undefined} onClick={()=>setMenuOpen(false)}><Glyph name={item.glyph}/><span>{item.label}</span></Link>)}</nav>
+    <nav id="site-navigation" className="ui-sidebar-nav" aria-label="Workspace pages">{navigation.map(item=><Link key={item.href} href={item.href} aria-current={pathname===item.href?'page':undefined} onClick={()=>setMenuOpen(false)}><Glyph name={item.glyph}/><span>{item.label}</span></Link>)}</nav>
     <div className="ui-sidebar-bottom"><div className="ui-pilot-label"><span className="ui-live-dot"/> CENTRAL DELHI PILOT</div><p>Relative risk, not road-safety certification.</p><Link className="ui-sidebar-user" href={signedIn?'/account':'/auth/login'} onClick={()=>setMenuOpen(false)}><span className="ui-user-avatar"><Glyph name="profile"/></span><span>{signedIn?'My account':'Log in / Sign up'}<small>Account & preferences</small></span><span aria-hidden="true">›</span></Link></div>
    </aside>
    {menuOpen&&<button type="button" className="ui-sidebar-shade" onClick={()=>setMenuOpen(false)} aria-label="Close menu"/>}
