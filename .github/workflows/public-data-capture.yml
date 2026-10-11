@@ -78,13 +78,20 @@ jobs:
               used=geofabrik
           stamp=datetime.datetime.now(datetime.timezone.utc).isoformat()
           file=out/'source.osm';file.write_bytes(source)
-          graph,manifest=compile_osm(file,stamp)
-          nodes,edges=verify_graph(graph)
-          assert nodes>50 and edges>50
-          manifest.update({'capture_endpoint':used,'source_bytes':len(source),'license_signoff':'PENDING_OWNER_REVIEW','publish_ready':False,'database_published':False,'terrain_status':'NOT_ATTACHED'})
-          (out/'graph-preview.json').write_bytes(canonical(graph))
+          manifest={'schema_version':'1.0','kind':'osm_review_required','source_sha256':hashlib.sha256(source).hexdigest(),'capture_endpoint':used,'captured_at':stamp,'source_bytes':len(source),'license':'ODbL 1.0','license_signoff':'PENDING_OWNER_REVIEW','publish_ready':False,'database_published':False,'terrain_status':'NOT_ATTACHED','compile_status':'NOT_STARTED'}
+          try:
+              graph,compiled=compile_osm(file,stamp)
+              nodes,edges=verify_graph(graph)
+              assert nodes>50 and edges>50
+              manifest.update(compiled)
+              manifest.update({'compile_status':'PREVIEW_ONLY','license_signoff':'PENDING_OWNER_REVIEW','publish_ready':False,'database_published':False,'terrain_status':'NOT_ATTACHED'})
+              (out/'graph-preview.json').write_bytes(canonical(graph))
+          except ValueError as exc:
+              if str(exc)!='GRAPH_BOUNDS_UNSUPPORTED':raise
+              manifest['compile_status']='GRAPH_LIMIT_EXCEEDED_REQUIRES_APPROVED_PARTITIONING'
+              print('GRAPH_COMPILATION_BLOCKED: original bounds exceeded; source preserved for explicit graph-partition design')
           (out/'graph-manifest.json').write_bytes(canonical(manifest))
-          print('OSM_PREVIEW='+json.dumps({'source_sha256':manifest['source_sha256'],'graph_sha256':graph['sha256'],'nodes':nodes,'edges':edges,'license_signoff':'PENDING','published':False}))
+          print('OSM_CAPTURE='+json.dumps({'source_sha256':manifest['source_sha256'],'source_bytes':len(source),'compile_status':manifest['compile_status'],'license_signoff':'PENDING_OWNER_REVIEW','published':False}))
           PY
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
