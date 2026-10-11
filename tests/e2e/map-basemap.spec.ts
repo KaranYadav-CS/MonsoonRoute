@@ -90,3 +90,21 @@ test('real map is default and simulated learning routes require explicit opt-in'
   await expect(page.getByRole('button',{name:'Run synthetic comparison'})).toBeEnabled();
   await expect(page.getByText(/Artificial streets and hypothetical rainfall/)).toBeVisible();
 });
+
+test('map point picker advances from origin to destination on real basemap clicks',async({page})=>{
+  await page.goto('/plan');
+  const map=page.getByRole('application');
+  await expect(map).toBeVisible();
+  const originButton=page.getByRole('button',{name:'1. Pick origin'});
+  const destinationButton=page.getByRole('button',{name:'2. Pick destination'});
+  await expect(originButton).toHaveAttribute('aria-pressed','true');
+  const originBefore=await page.locator('#originlat').inputValue();
+  await map.click({position:{x:190,y:170}});
+  await expect(destinationButton).toHaveAttribute('aria-pressed','true');
+  await expect.poll(()=>page.locator('#originlat').inputValue()).not.toBe(originBefore);
+  const destinationBefore=await page.locator('#destinationlat').inputValue();
+  await map.click({position:{x:330,y:260}});
+  await expect.poll(()=>page.locator('#destinationlat').inputValue()).not.toBe(destinationBefore);
+  await destinationButton.click();
+  await expect(destinationButton).toHaveAttribute('aria-pressed','true');
+});
