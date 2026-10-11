@@ -1,71 +1,68 @@
-# MonsoonRoute — self-authored P4 source repository
+# MonsoonRoute
 
-**Source status:** Full, original codebase produced offline for MonsoonRoute P4; **not a deployed production release**. No legacy GitHub page, media asset, or checked-out source is required by the new implementation. This repository is intentionally a replacement source tree for review and local development, not a binary copy of `KaranYadav-CS/MonsoonRoute`. No files have been pushed, committed remotely, or deployed as part of this P4 iteration.
+**Evidence-aware monsoon route research for Central Delhi** · [Live web app](https://monsoon-route-omega.vercel.app/) · [Map and live rainfall preview](https://monsoon-route-omega.vercel.app/plan)
 
-## Fastest working demonstration — no dependencies
+MonsoonRoute explores relative road-waterlogging evidence without claiming to predict measured water depth or guarantee safety. The live app displays **real OpenStreetMap-based streets** and a timestamped **nine-cell Open-Meteo precipitation preview**. The routing engine also has a clearly opt-in **synthetic educational comparison**, which must not be used for navigation.
 
-Run from the repository root:
+> **Release boundary (11 October 2026):** The public site is deployed and GitHub CI/Chromium navigation tests pass. A private AWS Lambda successfully loaded the pinned ONNX flood image classifier and classified a synthetic image in a private S3-to-Lambda smoke test. **Production road-level flood routing, authenticated report-photo processing, approved human moderation and independent real-world model accuracy have not passed end-to-end acceptance.** The real-route button remains gated and no synthetic route is silently presented as authentic Delhi guidance.
+
+## Live features and evidence
+
+| Feature | Verified status |
+| --- | --- |
+| Vercel Next.js web app | Deployed at the URL above; current main build verified through Vercel |
+| Main navigation and mobile menu | Click-through tested in GitHub-hosted Chromium |
+| Supabase email/password UI | Sign-up, login, reset, account, session-sensitive navigation implemented; real owner email confirmation and provider redirect still require validation |
+| Central Delhi basemap | Real OSM-derived vector basemap using MapLibre/OpenFreeMap; real point selection |
+| Nine-cell rainfall preview | Live Open-Meteo API; model estimates only, not measured water depth |
+| Synthetic route exploration | Explicit opt-in only; never usable for travel guidance |
+| Production flood-risk routing | **Not available** until audited and published graph/terrain/weather/review data |
+| Photo reporting and reviewer decisions | Schema, private bucket, API and application source exist; **not operational for real users** without live graph, secure backend keys and authorized reviewer |
+| Flood image model artifact | 343,342,041-byte ONNX model pinned to immutable upstream revision and uploaded to private encrypted AWS S3, checksum verified |
+| Private AWS model inference | Python 3.12 Lambda `monsoonroute-private-model-inference` in Mumbai, successful controlled private image smoke; **synthetic test only, not a field benchmark** |
+| CI | Node/Python checks and real-map Chromium navigation tests; see GitHub Actions |
+
+### What users can do today
+
+Open the [live planner](https://monsoon-route-omega.vercel.app/plan), choose origin and destination by clicking the actual street map, and inspect timestamped gridded rainfall estimates. Real flood-route recommendations remain unavailable until data-quality acceptance. Optional synthetic exercise is clearly labeled.
+
+Users can access [email login](https://monsoon-route-omega.vercel.app/auth/login), [sign-up](https://monsoon-route-omega.vercel.app/auth/signup) and [password recovery](https://monsoon-route-omega.vercel.app/auth/forgot-password). Before inviting real users, the owner must verify Supabase Auth URL settings, confirmation delivery, and the complete real account session.
+
+## Technical architecture
+
+- **Frontend**: Next.js 16 App Router, TypeScript, React, MapLibre GL JS, OpenStreetMap-derived OpenFreeMap tiles. Accessibility includes skip link, keyboard inputs and responsive navigation.
+- **Public weather display**: Nine-cell Open-Meteo precipitation, bounded provider validation, source labels and explicit no-flood-safety claims.
+- **Data and accounts**: Supabase PostgreSQL/PostGIS, Supabase Auth, RLS, private `report-photos` bucket. Owner-isolated access and reviewer service RPCs defined in `supabase/migrations/`.
+- **Risk/routing research core**: Deterministic directed-road graph algorithm, turn restrictions, closure exclusion, relative-risk scoring and detour budget; separate synthetic tests do **not** establish real Delhi performance.
+- **AWS inference**: Private S3 `monsoonroute-prod-artifacts-043063712559-ap-south-1`, content-addressed model SHA-256, AWS CodeBuild controlled export, IAM-only Lambda invocation, CloudWatch logs. No public inference URL or report-job event mapping.
+- **AWS groundwork**: Private encrypted SQS+DLQ and alarms prepared; actual report queue-to-model-to-Supabase reviewer integration remains disabled.
+
+### Model provenance and safety
+
+Source: [prithivMLmods/Flood-Image-Detection](https://huggingface.co/prithivMLmods/Flood-Image-Detection), pinned Git revision `1fb5408d3b778c92c79b3a7894517ce794ad21f7`. The source specifies 224×224 RGB bilinear preprocessing. ONNX SHA-256: `2517f3dfb5d82dc21a0729733fff7756eaca0b4b22026d153189501169a84d76`. The experiment has numerical parity checks, but **no controlled Delhi-held-out accuracy, precision, recall, F1, calibration or false-guidance evaluation**. Scores are uncalibrated; human reviewers alone can approve reports or closures.
+
+## Run and validate locally
+
+Prerequisites: Node.js 22, Python 3.12, your own approved environment settings (copy `.env.example` to `.env.local`; do not commit secrets).
 
 ```bash
-python scripts/generate_fixture.py
-python -m http.server 8000
-# Open http://localhost:8000/demo/
-```
-
-The `/demo/` folder is a standalone, real interactive responsive browser interface. It shares the same pure TypeScript routing algorithm (compiled into `demo/engine.mjs`). It does not require npm, a Google/Mapbox API key, internet, Supabase, Vercel, AWS, GPS, or a paid service. It depicts a **fabricated** street network and weather snapshot solely to demonstrate routing and uncertainty logic. **DO NOT USE IT TO NAVIGATE OR MAKE REAL FLOOD SAFETY DECISIONS.**
-
-Regenerate the browser ESM after changing the source routing engine with `npm run demo:build` once Node dependencies are installed (or `USE_GLOBAL_TYPESCRIPT=1 node scripts/build_offline_demo.mjs` in the audited current build environment). The committed ESM is included so the demo opens immediately.
-
-## Next.js product application (requires npm installation)
-
-Requires Node.js 22, a verified npm registry, PostgreSQL/Supabase service and approved server-only environment variables.
-
-```bash
-cp .env.example .env.local             # set approved keys privately; do not publish
-npm install --package-lock-only        # generate the previously unavailable lockfile
 npm ci
 npm run lint
 npm run typecheck
 npm test
 npm run build
-npm run dev
+npx playwright install chromium
+npx playwright test tests/e2e/map-basemap.spec.ts
 ```
 
-Use `http://localhost:3000` for the Next.js UI. Its pages include landing, route planning, observation reporting, review, history, report details and methodology. The `/plan` route also supports a visibly labeled synthetic demonstration. Live routes and real report submission fail closed while their required backend graph/OAuth/worker contracts are unavailable.
+Run `npm run dev` to develop locally. Backend credentials and published road data are deliberately **not** bundled; do not bypass disabled gates or use fabricated user IDs.
 
-**IMPORTANT:** This offline environment could not reach the npm registry (`ENOTCACHED`/DNS). Therefore there is **no genuine package-lock.json**, and full Next.js build, ESLint, TypeScript semantic checking, Playwright Next E2E and dependency audit have **not** passed here. No fabricated lockfile or green CI outcome is included.
+## Hackathon demonstration and responsible disclosure
 
-## Independent quality checks that ran offline
+Read [Submission write-up](docs/submission/WRITEUP.md), [Live-demo recording guide](docs/submission/DEMO_RECORDING_GUIDE.md) and [Release gate status](docs/submission/RELEASE_STATUS_2026-10-11.md). The actual hackathon submission requires a **public** eligible repository, organizer sign-in, a public/unlisted YouTube demonstration under three minutes, a truthful write-up, and a submission receipt. Current repository publication and submission must be verified by the owner; no award is guaranteed.
 
-```bash
-npm test                                   # 31 of 31 Node tests passed
-python -m unittest discover -s tests/integration -v    # 21 of 21 Python tests passed
-python scripts/package_workers.py
-python infra/aws/validate.py
-python scripts/check_artifacts.py
-python scripts/verify_demo_browser.py    # optional Chromium + Python Playwright
-python scripts/release_doctor.py         # intentionally exits 2, missing real production artifacts
-```
+**Credits:** OpenStreetMap contributors (ODbL), OpenFreeMap/OpenMapTiles (applicable tile attribution/terms), Open-Meteo (provider terms), public Hugging Face classifier and upstream author, MapLibre, Supabase, Vercel, AWS, Node/Python libraries, historical repository contributors (including `segrasevanon`), and AI-assisted engineering where used. License/redistribution review remains essential before public source publication.
 
-The optional Chromium test passed at desktop and mobile resolutions using locally injected static JSON and the same browser JS (no blocked external requests or live claims). Screenshot evidence is in `docs/p4-ui-1440.png` and `docs/p4-ui-390.png`.
+## Explicit limitations
 
-## Data and service architecture
-
-- `app/`, `components/`: Next.js App Router pages and responsive accessible UI components; `app/api/v1/`: strict server APIs.
-- `packages/engine/`: bounded turn-aware directed-graph risk comparison with closure and weather freshness abstention.
-- `packages/contracts/`: typed HTTP/validation schemas; `lib/server/`: service-only DB, authorization, quotas and report lifecycle.
-- `scripts/generate_fixture.py`, `demo/`: original, deterministic **synthetic** routing exercise.
-- `scripts/build_graph.py`, `scripts/build_terrain.py`, `scripts/import_graph.py`: reviewed-source OSM/DEM compilation, verification and import SQL generation. No live Delhi graph, DEM tile or real road data is bundled.
-- `services/weather/`, `services/vision/`, `services/maintenance/`: actual code for bounded weather ingest/archive/publish, lease-protected image pipeline and maintenance; packaged SAM Lambda builds are under each `build/`. Activation is intentionally deferred.
-- `models/export.py`, `models/parity.py`: owner-reviewed model snapshot to ONNX export and numerical parity gating; **no model weights/validated ONNX runtime** in the ZIP.
-- `supabase/`: canonical applied P3 migration SQL and seed; do not reapply migration to Karan's project without checking existing history.
-- `infra/aws/`: foundation/SAM infrastructure, IAM contracts, safety policies, budgets and validators. **No P4 cloud write or deploy**.
-- `.github/workflows`: proposed CI and release workflows for use **only after** review, npm lock generation, Git provenance/secret check and owner authorization.
-
-Read `docs/execution/04-github-code-and-ci.md`, `docs/implementation-matrix.md`, `docs/runbook.md`, `.state/p4.json`, and `docs/verification.json` before staging P5.
-
-## Security and claim boundary
-
-The live Supabase P3 project has schema/RLS/seed installed, but **no reviewed published real street graph**, and hosted OAuth is still pending. AWS functions/schedules/vision are disabled until actual P5 integration tests succeed. Exact source/model licenses, data freshness, reviewer identities, actual traffic/field measurements and end-to-end correctness are **not established**. All relative-risk values in the synthetic demo are hypothetical and must never be presented as Delhi flood measurements, guaranteed safety or validated model accuracy.
-
-**Provenance:** The online repository's 2026-10-10 baseline was `35d0e21c2004254f40522c9e24dacf8a36792534`, with historical commits attributed to `segrasevanon`. This ZIP does not incorporate its binary media or reattribute that person's commits. When integrating source in a real Git repository, preserve and separately review existing contributor/asset provenance. See `docs/THIRD_PARTY_NOTICES.md`.
+The UI is a research/pilot decision aid: not emergency response, not turn-by-turn navigation, not validated real-time flood detection, and not a guarantee a road is passable. Never enter or drive through floodwater based on this application.
