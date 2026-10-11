@@ -25,13 +25,13 @@ def predict(jpeg:bytes,model_path:str,processor_path:str,manifest_path:str|None=
     _verify(model_path,manifest.get('sha256') or '', 'MODEL')
     _verify(processor_path,manifest.get('preprocessor_sha256') or '', 'PROCESSOR')
     cfg=json.loads(Path(processor_path).read_text())
-    if cfg.get('method')!='siglip2-processor-approved' or cfg.get('channel_order')!='RGB' or cfg.get('resize_mode')!='squash':raise VisionUnavailable('PREPROCESSOR_NOT_VERIFIED')
+    if cfg.get('method')!='siglip2-processor-approved' or cfg.get('channel_order')!='RGB' or cfg.get('resize_mode')!='squash' or cfg.get('resample')!='bilinear':raise VisionUnavailable('PREPROCESSOR_NOT_VERIFIED')
     size=cfg.get('size')
     mean=cfg.get('image_mean');std=cfg.get('image_std')
-    if not isinstance(size,int) or not 224<=size<=512 or not isinstance(mean,list) or not isinstance(std,list) or len(mean)!=3 or len(std)!=3 or any(not 0<x<=1 for x in std):raise VisionUnavailable('PROCESSOR_CONFIG_INVALID')
+    if not isinstance(size,int) or size!=224 or not isinstance(mean,list) or not isinstance(std,list) or len(mean)!=3 or len(std)!=3 or any(not 0<x<=1 for x in std):raise VisionUnavailable('PROCESSOR_CONFIG_INVALID')
     try:
         with Image.open(io.BytesIO(jpeg)) as im:
-            im=ImageOps.exif_transpose(im).convert('RGB').resize((size,size),Image.Resampling.BICUBIC)
+            im=ImageOps.exif_transpose(im).convert('RGB').resize((size,size),Image.Resampling.BILINEAR)
             pixels=np.asarray(im,dtype=np.float32).transpose(2,0,1)/255.0
         pixels=(pixels-np.asarray(mean,dtype=np.float32)[:,None,None])/np.asarray(std,dtype=np.float32)[:,None,None]
         pixels=np.ascontiguousarray(pixels[None,:,:,:])
