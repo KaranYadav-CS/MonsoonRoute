@@ -21,7 +21,7 @@ export const POST=async(req:Request)=>handler(async()=>{
  if(!req.headers.get('content-type')?.startsWith('multipart/form-data;')||Number(req.headers.get('content-length')??0)>3700000)throw new ApiError(413,'INVALID_INPUT');
  let clean:Buffer;
  try{const form=await req.formData(),file=form.get('photo');if(form.get('consent')!=='yes'||[...form.keys()].some(k=>!['photo','consent'].includes(k))||!(file instanceof File)||!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size<1||file.size>3145728)throw Error('INVALID_IMAGE');clean=await sanitizePhoto(Buffer.from(await file.arrayBuffer()))}catch{throw new ApiError(422,'INVALID_INPUT')}
- await scopedQuota('user:'+user.id,'analysis_user_30min',1,1800);await scopedQuota('user:'+user.id,'photo_user_day',10,86400);await scopedQuota('global:photo_jobs_global','photo_jobs_global',100,86400);
+ await scopedQuota('user:'+user.id,'analysis_user_30min',10,1800);await scopedQuota('global:photo_jobs_global','photo_jobs_global',100,86400);
  const credentials=awsCredentialsProvider({roleArn:ROLE}),s3=new S3Client({region:REGION,credentials,maxAttempts:2}),lambda=new LambdaClient({region:REGION,credentials,maxAttempts:1});
  const key='user-analysis/'+randomUUID().replaceAll('-','')+'.jpg';let version:string|undefined;
  try{

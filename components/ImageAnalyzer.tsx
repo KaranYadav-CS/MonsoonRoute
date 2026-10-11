@@ -43,6 +43,6 @@ export default function ImageAnalyzer(){
   </form>}
   {message&&<p role="status" className="notice warning">{message}</p>}
   {receipt&&<section aria-live="polite" className="result analyzerResult"><span className="indicator">AWS model result · Uncalibrated</span><h3>{receipt.class_label}</h3><p>Classifier score: <strong>{(receipt.uncalibrated_probability*100).toFixed(1)}%</strong> (not measured accuracy)</p><p className="muted small">{receipt.disclaimer}</p><p className="muted small">Source: pinned ONNX model, IAM-private AWS Lambda. No road status was changed.</p></section>}
-  <p className="muted small">One analysis per confirmed account per 30-minute window; ten photos per account and one hundred photos across the pilot per day. Submitted images are stripped of metadata, stored encrypted, deleted after processing, and subject to a one-day lifecycle cleanup.</p>
+  <p className="muted small">Ten analyses per account per 30-minute window; one hundred photos across the pilot per day. Submitted images are stripped of metadata, stored encrypted, deleted after processing, and subject to a one-day lifecycle cleanup.</p>
  </div>;
 }
