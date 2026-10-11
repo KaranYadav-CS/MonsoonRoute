@@ -1,0 +1,29 @@
+name: monsoonroute-oidc-claim-inspection
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/oidc-claim-inspection.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Inspect GitHub-issued AWS-audience identity claims without exposing JWT
+        shell: bash
+        run: |
+          node --input-type=module <<'JS'
+          const url=new URL(process.env.ACTIONS_ID_TOKEN_REQUEST_URL);
+          url.searchParams.set('audience','sts.amazonaws.com');
+          const response=await fetch(url,{headers:{Authorization:'bearer '+process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN}});
+          if (!response.ok) throw Error('ID_TOKEN_REQUEST_FAILED');
+          const {value:jwt}=await response.json();
+          const segment=jwt.split('.')[1];
+          if(!segment)throw Error('MISSING_JWT_PAYLOAD');
+          const claims=JSON.parse(Buffer.from(segment,'base64url').toString('utf8'));
+          if(claims.repository!=='KaranYadav-CS/MonsoonRoute'||String(claims.repository_id)!=='1410686612'||String(claims.repository_owner_id)!=='237170955'||claims.aud!=='sts.amazonaws.com')throw Error('OIDC_REPO_CLAIM_MISMATCH');
+          console.log(JSON.stringify({iss:claims.iss,aud:claims.aud,sub:claims.sub,repository:claims.repository,repository_id:claims.repository_id,repository_owner_id:claims.repository_owner_id,ref:claims.ref,workflow_ref:claims.workflow_ref}));
+          JS
