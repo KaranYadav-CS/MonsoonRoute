@@ -9,5 +9,7 @@
   "model_sha256": null,
   "preprocessor_sha256": null,
   "advisory_only": true,
-  "notes": "The immutable upstream weights define a 224x224 bilinear processor, conflicting with the plan's 512x512 design. Deployment requires actual model artifact, numerical parity, held-out safety evaluation, and AWS CPU checks."
+  "notes": "The immutable upstream weights define a 224x224 bilinear processor, conflicting with the plan's 512x512 design. Deployment requires actual model artifact, numerical parity, held-out safety evaluation, and AWS CPU checks.",
+  "runtime_benchmark_validated": false,
+  "evaluation_approved": false
 }
