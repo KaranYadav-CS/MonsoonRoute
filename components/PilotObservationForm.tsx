@@ -49,6 +49,21 @@ export default function PilotObservationForm(){
    return()=>{active=false;subscription.unsubscribe()}
   }catch{Promise.resolve().then(()=>{if(active)setAuth('unavailable')});return()=>{active=false}}
  },[refresh]);
+ async function withdraw(item:Item){
+  if(busy||item.status!=='pending'||!window.confirm('Withdraw this pending observation and delete its private photo?'))return;
+  setBusy(true);setMessage('');
+  try{
+   const client=browserClient();
+   if(item.photo_path){
+    const removed=await client.storage.from('report-photos').remove([item.photo_path]);
+    if(removed.error)throw Error('Photo could not be erased; please retry withdrawal.');
+   }
+   const {error}=await client.from('pilot_observations').delete().eq('id',item.id).eq('user_id',owner).eq('status','pending');
+   if(error)throw Error('Observation withdrawal failed. Refresh and retry.');
+   setSuccess(true);setMessage('The provisional observation and its private image, if present, were withdrawn.');
+   void refresh(owner);
+  }catch(err){setSuccess(false);setMessage(err instanceof Error?err.message:'Withdrawal unavailable.')}finally{setBusy(false)}
+ }
  async function retryUpload(){
   if(!retry||busy)return;setBusy(true);setMessage('');
   try{const {error}=await browserClient().storage.from('report-photos').upload(retry.path,retry.blob,{contentType:'image/jpeg',upsert:false});
@@ -104,7 +119,7 @@ export default function PilotObservationForm(){
    </form>
    {retry&&<button className="btnSecondary" onClick={()=>void retryUpload()} disabled={busy}>Retry private photo upload</button>}
    {message&&<p role="status" className={'notice '+(success?'':'warning')}>{message}</p>}
-   <div className="pilotHistory"><h3>Your recent private observations</h3>{items.length===0?<p className="muted small">No observations saved yet.</p>:<div className="stack">{items.map(item=><div key={item.id} className="result"><strong>{item.category.replaceAll('_',' ')} · {item.status.replaceAll('_',' ')}</strong><p className="small muted">Observed {new Date(item.observed_at).toLocaleString()} · expires {new Date(item.expires_at).toLocaleString()}</p>{item.review_note&&<p className="small">Reviewer: {item.review_note}</p>}<p className="mono small">Reference {item.id.slice(0,8)}</p></div>)}</div>}</div>
+   <div className="pilotHistory"><h3>Your recent private observations</h3>{items.length===0?<p className="muted small">No observations saved yet.</p>:<div className="stack">{items.map(item=><div key={item.id} className="result"><strong>{item.category.replaceAll('_',' ')} · {item.status.replaceAll('_',' ')}</strong><p className="small muted">Observed {new Date(item.observed_at).toLocaleString()} · expires {new Date(item.expires_at).toLocaleString()}</p>{item.review_note&&<p className="small">Reviewer: {item.review_note}</p>}<p className="mono small">Reference {item.id.slice(0,8)}</p>{item.status==='pending'&&<button className="btnSecondary" type="button" disabled={busy} onClick={()=>void withdraw(item)}>Withdraw observation and private photo</button>}</div>)}</div>}</div>
   </>}
   <p className="small muted">Rate limit: two observations per ten minutes, eight per day. These submissions are provisional; published graph matching and closure approval are separate future gates. Private photos are not available to anonymous visitors.</p>
  </section>;
