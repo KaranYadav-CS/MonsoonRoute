@@ -33,3 +33,4 @@ jobs:
       - run: npx playwright test tests/e2e/map-basemap.spec.ts
         env:
           CI: 'true'
+          BASE_URL: 'https://monsoon-route-omega.vercel.app'
