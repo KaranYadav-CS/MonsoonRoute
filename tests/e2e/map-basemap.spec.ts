@@ -14,7 +14,7 @@ test('live APIs provide a published real graph, current archived weather and jun
 });
 test('private review, report history and photos require authentication',async({request})=>{
  for(const endpoint of ['/api/v1/review/reports','/api/v1/me/reports','/api/v1/me/routes'])expect((await request.get(endpoint)).status()).toBe(401);
- const r=await request.post('/api/v1/analyze',{headers:{origin:'https://monsoon-route-omega.vercel.app'}});expect(r.status()).toBe(401);
+ const r=await request.post('/api/v1/analyze',{headers:{origin:'https://monsoon-route-omega.vercel.app','content-type':'multipart/form-data; boundary=smoke'}});expect(r.status()).toBe(401);
 });
 test('desktop navigation and email authentication pages work',async({page})=>{
  await page.goto('/');const nav=page.getByRole('navigation',{name:'Main navigation'});

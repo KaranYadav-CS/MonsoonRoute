@@ -15,7 +15,7 @@ const FUNCTION='arn:aws:lambda:ap-south-1:043063712559:function:monsoonroute-pri
 const ROLE='arn:aws:iam::043063712559:role/monsoonroute-vercel-private-analysis';
 const MODEL='2517f3dfb5d82dc21a0729733fff7756eaca0b4b22026d153189501169a84d76';
 export const POST=async(req:Request)=>handler(async()=>{
- originCheck(req);const user=await requireUser();if(!user.email_confirmed_at)throw new ApiError(403,'FORBIDDEN');
+ originCheck(req,'multipart/form-data');const user=await requireUser();if(!user.email_confirmed_at)throw new ApiError(403,'FORBIDDEN');
  const {data:context,error}=await serviceDB().rpc('backend_context',{p_actor:user.id});if(error)throw new ApiError(503,'BACKEND_UNAVAILABLE');
  if(process.env.VERCEL_ENV!=='production'||process.env.AWS_ANALYSIS_ENABLED!=='true'||process.env.AWS_ANALYSIS_ROLE_ARN!==ROLE||!context.flags.aws_enabled||!context.flags.vision_enabled)throw new ApiError(503,'ANALYSIS_UNAVAILABLE');
  if(!req.headers.get('content-type')?.startsWith('multipart/form-data;')||Number(req.headers.get('content-length')??0)>3700000)throw new ApiError(413,'INVALID_INPUT');

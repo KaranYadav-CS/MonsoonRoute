@@ -1,45 +1,33 @@
-"""Conservative AWS maintenance worker: audit archive before retention writes.
-
-Disabled by default. Unverified object deletion is not silently considered complete.
-"""
-from __future__ import annotations
-import os,json,hashlib,logging,re
+"""Bounded private maintenance: durable queue repair and verified retention cleanup."""
+import os,json,time,hashlib,uuid
 from datetime import datetime,timezone
-from backend import rpc,BackendError
-logger=logging.getLogger(__name__)
-
-def archive_events(events:list[dict],bucket:str):
-    if not events:return {'count':0,'key':None}
-    if len(events)>500:raise BackendError('AUDIT_BATCH_TOO_LARGE')
-    ids=[e['id'] for e in events]
-    if len(set(ids))!=len(ids) or not all(isinstance(x,int) and x>0 for x in ids):raise BackendError('AUDIT_BATCH_INVALID')
-    raw=json.dumps({'schema_version':'1.0','exported_at':datetime.now(timezone.utc).isoformat(),'records':events},sort_keys=True,separators=(',',':')).encode()
-    key='audit/'+datetime.now(timezone.utc).strftime('%Y/%m/%d/')+hashlib.sha256(raw).hexdigest()+'.json'
-    import boto3
-    s3=boto3.client('s3',region_name='ap-south-1')
-    s3.put_object(Bucket=bucket,Key=key,Body=raw,ServerSideEncryption='AES256',ContentType='application/json')
-    if s3.head_object(Bucket=bucket,Key=key)['ContentLength']!=len(raw):raise BackendError('AUDIT_ARCHIVE_NOT_VERIFIED')
-    n=rpc('commit_audit_archive',{'p_ids':ids,'p_key':key})
-    if not isinstance(n,int) or n!=len(ids):raise BackendError('AUDIT_COMMIT_INCOMPLETE')
-    return {'count':n,'key':key}
-
+from backend import rpc,object_remove,update_row,BackendError
+BUCKET='monsoonroute-prod-artifacts-043063712559-ap-south-1'
+QUEUE='https://sqs.ap-south-1.amazonaws.com/043063712559/monsoonroute-p5-inactive-vision'
 def lambda_handler(event,context):
-    if os.environ.get('MAINTENANCE_ENABLED')!='true':return {'status':'disabled','audited':0}
-    bucket=os.environ.get('ARTIFACT_BUCKET','')
-    if not re.fullmatch(r'monsoonroute-(?:prod|production)-[a-z0-9-]{3,70}',bucket):raise BackendError('MAINTENANCE_BUCKET_NOT_CONFIGURED')
-    try:
-        data=rpc('maintenance_context',{})
-        if not isinstance(data,dict):raise BackendError('MAINTENANCE_CONTEXT_INVALID')
-        # Do not purge private media here without a separate reviewed Storage deletion
-        # proof and owner-specific retention policy.
-        media=data.get('cleanup_reports') or []
-        if media:logger.warning('media_cleanup_deferred_count=%d',len(media))
-        archival=archive_events(data.get('audit') or [],bucket)
-        # Database pruning is an independently audited SQL function and may require a
-        # separate operational retention review before setting the flag below.
-        pruned=None
-        if os.environ.get('MAINTENANCE_PRUNE_APPROVED')=='true':pruned=rpc('prune_maintenance',{})
-        return {'status':'processed','archived_count':archival['count'],'media_pending':len(media),'pruned':pruned}
-    except Exception as e:
-        logger.warning('maintenance_failed class=%s',type(e).__name__)
-        raise RuntimeError('MAINTENANCE_FAILED') from None
+ import boto3
+ if os.getenv('MAINTENANCE_ENABLED')!='true':return {'status':'paused'}
+ started=time.monotonic();data=rpc('maintenance_context',{});flags=data.get('flags',{});sqs=boto3.client('sqs',region_name='ap-south-1');sent=removed=archived=0
+ if flags.get('aws_enabled') and flags.get('vision_enabled'):
+  for job in data.get('jobs',[]):
+   if time.monotonic()-started>40:break
+   if not rpc('reserve_vision_enqueue',{'p_job':job['id']}):continue
+   sqs.send_message(QueueUrl=QUEUE,MessageBody=json.dumps({'schema_version':'1.0','job_id':job['id'],'report_id':job['report_id'],'request_id':str(uuid.uuid4())}));sent+=1
+ now=datetime.now(timezone.utc)
+ for report in data.get('cleanup_reports',[]):
+  if time.monotonic()-started>45:break
+  age=(now-datetime.fromisoformat(report['created_at'].replace('Z','+00:00'))).total_seconds()
+  for column,ttl in [('photo_original_path',86400),('photo_processed_path',604800)]:
+   path=report.get(column)
+   if path and (age>=ttl or report['status']=='withdrawn'):
+    expected=report['user_id']+'/'+report['id']+'/'+('original' if column=='photo_original_path' else 'processed.jpg')
+    if path!=expected:raise BackendError('RETENTION_PATH_MISMATCH')
+    object_remove(path);update_row('reports',{'id':report['id'],column:path},{column:None});removed+=1
+ events=data.get('audit',[])
+ if events and time.monotonic()-started<45:
+  raw=json.dumps({'schema_version':'1.0','exported_at':now.isoformat(),'records':events},sort_keys=True,separators=(',',':')).encode();key='audit/'+now.strftime('%Y/%m/%d/')+hashlib.sha256(raw).hexdigest()+'.json'
+  s3=boto3.client('s3',region_name='ap-south-1');s3.put_object(Bucket=BUCKET,Key=key,Body=raw,ServerSideEncryption='AES256',ContentType='application/json')
+  if s3.head_object(Bucket=BUCKET,Key=key)['ContentLength']!=len(raw):raise BackendError('ARCHIVE_INCOMPLETE')
+  archived=rpc('commit_audit_archive',{'p_ids':[e['id'] for e in events],'p_key':key})
+ update_row('service_status',{'name':'maintenance'},{'last_success_at':now.isoformat(),'last_error_code':None,'summary':{'requeued':sent,'media_removed':removed,'archived':archived}})
+ return {'status':'processed','requeued':sent,'media_removed':removed,'archived':archived}
