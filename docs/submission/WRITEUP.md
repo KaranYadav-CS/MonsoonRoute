@@ -8,7 +8,7 @@ During monsoon conditions, commuters often know there is heavy rain somewhere in
 
 **MonsoonRoute** is an evidence-aware, Central Delhi research pilot. Its live web experience displays an actual OpenStreetMap-derived street basemap and a nine-cell Open-Meteo precipitation preview with timestamps and caveats. Users can pick map locations directly. The underlying deterministic routing research engine evaluates time, modeled relative risk and detour budgets on a separately labeled synthetic graph. We deliberately do not present this exercise as validated navigation.
 
-The application now offers Supabase email/password registration, login and password-reset screens. Sensitive community road observations are designed for owner-isolated storage and human review; the production report workflow is presently gated because the required validated road graph and secure backend credentials have not yet passed release checks.
+The application now offers Supabase email/password registration, login and password-reset screens. The deployed app also supports **provisional community road observations** tied to real map coordinates through Supabase Auth and owner-isolated RLS. One real, non-test observation has reached the private database. Optional photos are re-encoded to remove embedded metadata before a private Supabase Storage upload; however, actual user photo-upload acceptance remains unverified. Reports are held for human triage and cannot trigger a road closure or influence routing without validated graph evidence.
 
 ## Where AWS genuinely executes
 
@@ -28,7 +28,7 @@ These are authentic AWS operations, not an on-screen mock. They establish execut
 
 ## Scientific limits and next steps
 
-No reviewed Central Delhi routing graph is published; there is no integrated authenticated user-photo → moderation → safe reroute production run. There is no independent Delhi-held-out model accuracy or road-depth benchmark. The planned implementation is to publish provenance-checked OSM roads and terrain, verify fresh weather ingestion and secure report storage, complete human review and rerouting, and only then release evidence-aware route comparison. Unsupported features remain disabled.
+A real-map preliminary observation intake is deployed, but no reviewed Central Delhi routing graph is published; there is no integrated authenticated user-photo → moderation → safe reroute production run. There is no independent Delhi-held-out model accuracy or road-depth benchmark. The planned implementation is to publish provenance-checked OSM roads and terrain, verify fresh weather ingestion and secure report storage, complete human review and rerouting, and only then release evidence-aware route comparison. Unsupported features remain disabled.
 
 ## Attribution
 
