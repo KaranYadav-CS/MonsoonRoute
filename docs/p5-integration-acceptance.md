@@ -1,0 +1,12 @@
+# MonsoonRoute integration acceptance — live state as of 2026-10-11
+- Latest verified core GitHub + Vercel build operational; production frontend exists.
+- Pinned HF flood model ONNX built on CPU in GitHub run 38134804126. Independent artifact bytes verified in run 38135505456. Source **224×224 bilinear**, in conflict with original 512×512 spec: see models/numerical-evidence.json.
+- ONNX object **NOT VERIFIED UPLOADED TO AWS**. Manual dispatch workflow `.github/workflows/promote-model-to-s3.yml` is intentionally gated and will only assume a Karan-owned OIDC model-upload role (never static AWS keys). S3 archive target `monsoonroute-prod-artifacts-043063712559-ap-south-1/models/sha256/<modelhash>/`.
+- CRITICAL: Active AWS plugin session on 2026-10-11 reported account **908124814277**, not intended Karan account **043063712559**. A pre-write account guard refused IAM mutation. Do not attempt CloudFormation/IAM/S3 writes until Karan's AWS account is reconnected, verified by sts:GetCallerIdentity, and its exact branch-subject trust role created.
+- Verified GitHub-issued JWT subject `repo:KaranYadav-CS@237170955/MonsoonRoute@1410686612:ref:refs/heads/main`; audience `sts.amazonaws.com` (GitHub run 38135288464). IAM role trust must use these exact values and only allow PutObject/GetObject on the model SHA bucket prefix.
+- Generated AWS CSPRNG 64-character server-only HMAC values installed as **sensitive** Vercel production and preview vars; different value per environment, neither value disclosed.
+- Auth still requires Karan GitHub OAuth application setup in Supabase Auth, actual sign-in, legitimate admin/reviewer bootstrap; do not fabricate users/secret.
+- Supabase runtime currently has 0 published graph versions, 0 edges, 0 weather runs and 0 users; do not enable AWS processing. Weather capture passed in GitHub; OSM extraction fallback was added but requires source/provenance/terrain review before import. Both are staged/unpublished.
+- AWS P5 inactive foundation exists from prior operator session: S3 versioning/private encryption, encrypted SQS/DLQ, two alarms, **no Lambdas/schedules**. No real full report/vision pipeline has passed.
+- Runtime ML remains manual review only until independent held-out accuracy/calibration, Lambda memory/p95/latency, model/processor S3 checksum and end-to-end private photo test. No automatic road closure.
+- Full release must pass source-of-truth Plan-2.md §P5/implementation specification §§7,11,13,17–21; this document is a partial receipt, not a certification.

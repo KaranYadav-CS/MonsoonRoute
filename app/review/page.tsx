@@ -1,0 +1,2 @@
+import ReviewPanel from '@/components/ReviewPanel';
+export default function Review(){return <div className="ui-workspace-page"><section className="container pageHero"><span className="eyebrow">REVIEWER WORKSPACE</span><h1>Review road observations</h1><p>Access-controlled evidence review, revision-safe decisions and time-limited road closures.</p></section><section className="container ui-review-body"><ReviewPanel/></section></div>}

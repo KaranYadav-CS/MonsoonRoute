@@ -1,0 +1,42 @@
+name: monsoonroute-model-artifact-audit
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/model-artifact-audit.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Download completed immutable-revision numerical model artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/model"
+          gh run download 38134804126 --repo KaranYadav-CS/MonsoonRoute --name monsoonroute-onnx-numerical-only --dir "$RUNNER_TEMP/model"
+      - name: Confirm model and preprocessing byte hashes and display public evidence
+        env:
+          MODEL_DIR: ${{ runner.temp }}/model
+        run: |
+          python - <<'PY'
+          import json,hashlib,os,pathlib
+          p=pathlib.Path(os.environ['MODEL_DIR'])
+          m=json.loads((p/'manifest.json').read_text())
+          assert m['revision']=='1fb5408d3b778c92c79b3a7894517ce794ad21f7'
+          assert m['model_id']=='prithivMLmods/Flood-Image-Detection'
+          assert m['fixtures_tested']==20 and m['parity_validated'] is True
+          assert m['runtime_benchmark_validated'] is False and m['evaluation_approved'] is False
+          assert m['tensor_max_abs_error']<=1e-5 and m['logits_max_abs_error']<=1e-3
+          assert len(m['sha256'])==64 and len(m['preprocessor_sha256'])==64
+          for filename,expected in [('model.onnx',m['sha256']),('processor.json',m['preprocessor_sha256'])]:
+              h=hashlib.sha256()
+              with (p/filename).open('rb') as f:
+                  for b in iter(lambda:f.read(4*1024*1024),b''):h.update(b)
+              assert h.hexdigest()==expected,filename
+          print('VERIFIED_MODEL_RECEIPT='+json.dumps(m,sort_keys=True,separators=(',',':')))
+          print('MODEL_BYTES='+str((p/'model.onnx').stat().st_size))
+          PY

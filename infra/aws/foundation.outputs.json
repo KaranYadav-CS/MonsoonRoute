@@ -1,0 +1,16 @@
+{
+  "stack_name": "monsoonroute-prod-foundation",
+  "stack_status": "CREATE_COMPLETE",
+  "stack_arn": "arn:aws:cloudformation:ap-south-1:043063712559:stack/monsoonroute-prod-foundation/cf860320-c4bf-11f1-bedf-06ffc74e2d33",
+  "bucket_name": "monsoonroute-prod-sam-043063712559-ap-south-1",
+  "bucket_arn": "arn:aws:s3:::monsoonroute-prod-sam-043063712559-ap-south-1",
+  "region": "ap-south-1",
+  "public_access_block": "all_four_enabled",
+  "encryption": "AES256",
+  "versioning": "Enabled",
+  "tls_policy": "verified_deny_insecure_transport",
+  "lifecycle": "14_day_builds_7_day_noncurrent_1_day_multipart",
+  "project_tags": "verified",
+  "objects_at_audit": 0,
+  "credential_values_stored": false
+}

@@ -1,0 +1,2 @@
+import ImageAnalyzer from '@/components/ImageAnalyzer';
+export default function Analyze(){return <div className="ui-workspace-page"><section className="container pageHero"><span className="eyebrow">PRIVATE PHOTO ANALYSIS</span><h1>Flood image analysis</h1><p>An optional authenticated AWS classification workflow, separate from route decisions and community-road evidence.</p></section><section className="container ui-analysis-body"><ImageAnalyzer/></section></div>}

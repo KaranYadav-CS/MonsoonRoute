@@ -1,0 +1,3 @@
+import {test,expect} from '@playwright/test';
+test('home and methodology accessible',async({page})=>{await page.goto('/');await expect(page.getByRole('heading',{level:1})).toContainText('Know what');await page.keyboard.press('Tab');await expect(page.getByRole('link',{name:'Skip to content'})).toBeFocused();await page.goto('/methodology');await expect(page.getByRole('heading',{name:/Explain the model/})).toBeVisible()});
+test('mobile planner can operate by keyboard',async({page})=>{await page.setViewportSize({width:390,height:844});await page.goto('/plan');await expect(page.getByRole('button',{name:/Compare routes/})).toBeVisible();await expect(page.locator('#detour')).toBeVisible()});

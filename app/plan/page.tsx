@@ -1,0 +1,2 @@
+import RoutePlanner from '@/components/RoutePlanner';
+export default function Plan(){return <div className="ui-workspace-page ui-routes-page"><section className="container pageHero"><span className="eyebrow">LIVE TRAFFIC INTELLIGENCE · CENTRAL DELHI PILOT</span><h1>Find a safer route</h1><p>Compare supported routes based on travel-time bounds, modeled relative exposure and the most recent available evidence.</p></section><section className="container ui-route-workspace"><RoutePlanner/></section></div>}

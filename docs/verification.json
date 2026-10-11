@@ -1,0 +1,40 @@
+{
+  "checks": {
+    "aws_template_validator": "PASS",
+    "browser_desktop": {
+      "js_errors": 0,
+      "overflow": false,
+      "status": "PASS",
+      "viewport": "1440x900",
+      "visible_route_options": 3
+    },
+    "browser_mobile": {
+      "js_errors": 0,
+      "overflow": false,
+      "status": "PASS",
+      "viewport": "390x844",
+      "visible_route_options": 3
+    },
+    "full_next_build": "NOT_RUN_NPM_REGISTRY_UNAVAILABLE",
+    "full_next_typecheck": "NOT_RUN_NPM_REGISTRY_UNAVAILABLE",
+    "isolated_browser_engine_parity_tests": 4,
+    "next_playwright_e2e": "NOT_RUN_NPM_REGISTRY_UNAVAILABLE",
+    "node_failed": 0,
+    "node_passed": 31,
+    "python_failed": 0,
+    "python_passed": 21,
+    "release_doctor": "EXPECTED_FAIL_REAL_INPUTS_MISSING",
+    "ts_syntax_errors": 0,
+    "ts_syntax_files": 59,
+    "worker_archives_packaged": "PASS"
+  },
+  "notes": [
+    "Python Playwright used local script and fixture injection due blocked browser localhost",
+    "No full Next build without reviewed lockfile and npm install",
+    "No user secrets were included",
+    "No cloud deployment or account settings were modified in P4"
+  ],
+  "release_ready": false,
+  "scope": "locally executed source/fixture/syntax/browser/static AWS validation only",
+  "target": "Self-authored MonsoonRoute P4 offline codebase"
+}

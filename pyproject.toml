@@ -1,0 +1,9 @@
+[project]
+name = "monsoonroute-workers"
+version = "0.2.0"
+requires-python = ">=3.12"
+dependencies = []
+[project.optional-dependencies]
+test = ["pytest==8.4.2", "Pillow==11.3.0"]
+[tool.pytest.ini_options]
+testpaths = ["tests/integration"]

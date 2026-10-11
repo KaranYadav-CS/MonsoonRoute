@@ -1,0 +1,2 @@
+import HistoryPanel from '@/components/HistoryPanel';
+export default function History(){return <div className="ui-workspace-page"><section className="container pageHero"><span className="eyebrow">YOUR SAVED ROUTES</span><h1>Journey history</h1><p>Private, opt-in snapshots. Previous comparisons are not live route guidance.</p></section><section className="container centerCard"><HistoryPanel/></section></div>}

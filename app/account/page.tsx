@@ -1,0 +1,2 @@
+import AccountPanel from '@/components/AccountPanel';
+export default function Account(){return <div className="ui-workspace-page"><section className="container pageHero"><span className="eyebrow">YOUR PROFILE</span><h1>Profile & account</h1><p>Manage your session and access your private routes and reports.</p></section><section className="container ui-profile-body"><AccountPanel/></section></div>}

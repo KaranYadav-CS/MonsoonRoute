@@ -1,0 +1,10 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "monsoonroute-prod"
+region = "ap-south-1"
+capabilities = "CAPABILITY_IAM"
+s3_bucket = "monsoonroute-prod-sam-043063712559-ap-south-1"
+confirm_changeset = true
+fail_on_empty_changeset = false
+# DO NOT run until real worker sources, backend secret and immutable model hashes exist.
+# The project SAM application stack is not deployed by the P1 foundation phase.
