@@ -42,18 +42,19 @@ export default function SiteHeader(){
  if(pathname.startsWith('/auth/'))return null;
  const isHome=pathname==='/';
  return <>
-  {isHome?<header className="ui-landing-nav">
-   <Link href="/" className="ui-landing-brand" aria-label="MonsoonRoute home"><img src="/ui/logo-white.webp" alt="MonsoonRoute" width="170" height="56"/></Link>
-   <button type="button" className="ui-menu-btn" onClick={()=>setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-controls="site-navigation"><span>{menuOpen?'Close menu':'Menu'}</span> <span aria-hidden="true">{menuOpen?'×':'☰'}</span></button>
-   <nav id="site-navigation" className={menuOpen?'ui-landing-links is-open':'ui-landing-links'} aria-label="Main navigation">
-    <Link href="/" aria-current="page" onClick={()=>setMenuOpen(false)}>Home</Link>
-    <a href="#features" onClick={()=>setMenuOpen(false)}>Features</a>
-    <a href="#how-it-works" onClick={()=>setMenuOpen(false)}>How it works</a>
-    <Link href="/plan" onClick={()=>setMenuOpen(false)}>Live map</Link>
-    <Link href="/methodology" onClick={()=>setMenuOpen(false)}>Methodology</Link>
-    <Link className="ui-nav-login" href={signedIn?'/account':'/auth/login'} onClick={()=>setMenuOpen(false)}>{signedIn?'My account':'Log in'}</Link>
-    {!signedIn&&<Link className="ui-nav-signup" href="/auth/signup" onClick={()=>setMenuOpen(false)}>Sign up</Link>}
-   </nav>
+  {isHome?<header className="mr-nav" id="top">
+   <div className="mr-track mr-nav-inner">
+    <Link href="/" className="mr-nav-logo" aria-label="MonsoonRoute home" onClick={()=>setMenuOpen(false)}><img src="/ui/logo-white.webp" alt="MonsoonRoute" width="180" height="57"/></Link>
+    <button type="button" className="mr-nav-toggle" onClick={()=>setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-controls="site-navigation" aria-label={menuOpen?'Close navigation':'Open navigation'}><span aria-hidden="true">{menuOpen?'×':'☰'}</span><span>{menuOpen?'Close':'Menu'}</span></button>
+    <nav id="site-navigation" className={menuOpen?'mr-nav-links is-open':'mr-nav-links'} aria-label="Landing navigation">
+     <a className="is-active" href="#home" aria-current="page" onClick={()=>setMenuOpen(false)}>Home</a>
+     <a href="#features" onClick={()=>setMenuOpen(false)}>Features</a>
+     <a href="#how-it-works" onClick={()=>setMenuOpen(false)}>How it works</a>
+     <Link href="/plan" onClick={()=>setMenuOpen(false)}>Live map</Link>
+     <a href="#impact" onClick={()=>setMenuOpen(false)}>Impact</a>
+     <div className="mr-nav-actions"><Link className="mr-nav-login" href={signedIn?'/account':'/auth/login'} onClick={()=>setMenuOpen(false)}>{signedIn?'My account':'Log in'}</Link>{!signedIn&&<Link className="mr-nav-signup" href="/auth/signup" onClick={()=>setMenuOpen(false)}>Sign up</Link>}</div>
+    </nav>
+   </div>
   </header>:
   <><header className="ui-mobile-top"><button type="button" className="ui-menu-btn" onClick={()=>setMenuOpen(!menuOpen)} aria-controls="site-navigation" aria-expanded={menuOpen} aria-label={menuOpen?'Close navigation':'Open navigation'}><span aria-hidden="true">{menuOpen?'×':'☰'}</span> <span>{menuOpen?'Close':'Menu'}</span></button><Link href="/" className="ui-mobile-brand" aria-label="MonsoonRoute home"><img src="/ui/logo.webp" alt="MonsoonRoute" width="170" height="50"/></Link><Link href={signedIn?'/account':'/auth/login'} aria-label="Account"><Glyph name="profile"/></Link></header>
    <aside className={menuOpen?'ui-sidebar is-open':'ui-sidebar'} aria-label="Main navigation">

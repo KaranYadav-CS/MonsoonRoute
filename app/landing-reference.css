@@ -1,0 +1,229 @@
+/* MonsoonRoute landing-page implementation based on the supplied design reference.
+   All rules are scoped to the home shell or the home-only navigation. */
+.ui-home-app {
+  --mr-ink:#101d38;
+  --mr-blue:#0389d2;
+  --mr-cyan:#4dd0fa;
+  --mr-muted:#60728c;
+  --mr-track: min(1380px, calc(100% - 2 * clamp(18px, 3.5vw, 54px)));
+  background:#f4f8fe;
+}
+.ui-home-app .ui-app-content {animation:none;min-width:0;overflow:visible}
+.ui-home-app .mr-track {width:var(--mr-track);max-width:100%;margin-inline:auto}
+.ui-home-app .mr-landing {min-width:0;overflow:clip;font-family:Inter,'Segoe UI',ui-sans-serif,system-ui,sans-serif;color:var(--mr-ink);line-height:1.56}
+.ui-home-app .mr-landing :where(h1,h2,h3,p) {margin:0}
+.ui-home-app .mr-landing :where(h1,h2,h3) {font-family:'Plus Jakarta Sans',Inter,'Segoe UI',ui-sans-serif,system-ui,sans-serif;text-wrap:balance;line-height:1.18}
+.ui-home-app .mr-landing a {text-decoration:none}
+.ui-home-app :where(.mr-nav a,.mr-nav button,.mr-landing a,.mr-landing button):focus-visible {outline:3px solid #38bdf8;outline-offset:4px}
+.ui-home-app .mr-landing img {max-width:100%;display:block}
+.ui-home-app .mr-landing :where(section) {scroll-margin-top:88px}
+/* Solid, non-translucent header with the same content track as every section. */
+.ui-home-app .mr-nav {position:relative;z-index:100;background:#081221;border-bottom:1px solid #22364b;box-shadow:0 3px 16px #010a182b;width:100%}
+.ui-home-app .mr-nav a {text-decoration:none}
+.ui-home-app .mr-nav-inner {min-height:76px;display:flex;align-items:center;gap:clamp(18px,3vw,40px);justify-content:space-between}
+.ui-home-app .mr-nav-logo {flex:0 0 auto;display:flex;align-items:center;width:clamp(152px,12vw,184px);line-height:1}
+.ui-home-app .mr-nav-logo img {display:block;width:100%;height:auto;max-height:55px;object-fit:contain;object-position:left center}
+.ui-home-app .mr-nav-links {display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,1.7vw,28px);flex:1 1 auto;max-width:900px}
+.ui-home-app .mr-nav-links>a {position:relative;white-space:nowrap;color:#dbe2ed;font-size:clamp(12px,.95vw,14px);font-weight:650;min-height:44px;display:inline-flex;align-items:center;transition:color .2s ease}
+.ui-home-app .mr-nav-links>a:hover,.ui-home-app .mr-nav-links>a.is-active {color:#fff}
+.ui-home-app .mr-nav-links>a.is-active:after,.ui-home-app .mr-nav-links>a:not(.mr-nav-login):not(.mr-nav-signup):hover:after {content:'';position:absolute;height:2px;left:0;right:0;bottom:7px;background:#42bff2;border-radius:2px;box-shadow:0 0 9px #39c3ff70}
+.ui-home-app .mr-nav-actions {display:flex;align-items:center;gap:10px;margin-left:clamp(2px,1.7vw,22px)}
+.ui-home-app .mr-nav-actions a {display:inline-flex;align-items:center;justify-content:center;border-radius:999px;min-height:41px;white-space:nowrap;padding:8px clamp(14px,1.45vw,21px);font-size:13px;font-weight:700;transition:transform .2s ease,background .2s ease,box-shadow .2s ease}
+.ui-home-app .mr-nav-login {border:1px solid #566476;background:#172234;color:#f0f5fe}
+.ui-home-app .mr-nav-signup {background:#048ad2;color:white;box-shadow:0 5px 15px #008bd527}
+.ui-home-app .mr-nav-actions a:hover {transform:translateY(-2px);box-shadow:0 6px 18px #10a5eb3b}
+.ui-home-app .mr-nav-toggle {display:none;align-items:center;justify-content:center;gap:9px;min-height:44px;border:1px solid #50617a;color:#fff;border-radius:10px;background:#16243a;padding:8px 12px;font-weight:700}
+/* Hero recreates the reference composition at more conservative text/button sizes. */
+.ui-home-app .mr-hero {position:relative;isolation:isolate;min-height:clamp(560px,57vw,690px);display:flex;align-items:center;color:white;background:#071629;overflow:hidden}
+.ui-home-app .mr-hero-image {position:absolute;z-index:-2;inset:0;background-image:url('/ui/hero-road.webp');background-size:cover;background-position:center 45%;animation:mr-bg-breathe 22s ease-in-out infinite alternate}
+.ui-home-app .mr-hero-overlay {position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,#061429d9 0%,#061429ba 33%,#0614297a 67%,#06142961 100%),linear-gradient(180deg,#04102435 0%,#03102118 43%,#031225c9 100%)}
+.ui-home-app .mr-hero-layout {padding-block:clamp(42px,5.5vw,76px) clamp(106px,9vw,132px)}
+.ui-home-app .mr-hero-copy {max-width:790px}
+.ui-home-app .mr-badge {display:inline-flex;align-items:center;gap:9px;border-radius:100px;border:1px solid #a1d6f164;padding:7px 14px;background:#0c223eec;letter-spacing:.08em;font-weight:750;font-size:clamp(10px,.8vw,12px);color:#e9f8ff;box-shadow:0 7px 22px #00101c44;animation:mr-enter .52s both}
+.ui-home-app .mr-pulse {width:8px;height:8px;border-radius:50%;background:#13c79a;box-shadow:0 0 0 4px #18caa21c,0 0 14px #26dcbca6;animation:mr-pulse 2.4s ease-in-out infinite}
+.ui-home-app .mr-hero h1 {font-size:clamp(2.45rem,4.4vw,4.25rem);line-height:1.105;letter-spacing:-.047em;font-weight:850;max-width:820px;margin:clamp(20px,2.4vw,28px) 0 20px;animation:mr-enter .66s .1s both;text-shadow:0 3px 18px #00112278}
+.ui-home-app .mr-hero h1 span {color:#4dc7fa;white-space:normal}
+.ui-home-app .mr-hero-lead {max-width:670px;font-size:clamp(15px,1.13vw,17px);line-height:1.8;color:#e3eaf4;font-weight:420;animation:mr-enter .66s .2s both}
+.ui-home-app .mr-actions {display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:clamp(25px,3vw,34px)}
+.ui-home-app .mr-button {min-height:46px;border-radius:100px;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:11px 23px;font-size:14px;font-weight:750;line-height:1.2;white-space:nowrap;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,border-color .22s ease,background .22s ease;will-change:transform}
+.ui-home-app .mr-button:hover {transform:translateY(-3px)}
+.ui-home-app .mr-button:active {transform:translateY(0)}
+.ui-home-app .mr-button-primary {background:linear-gradient(135deg,#048bdb,#036fa9);box-shadow:0 8px 20px #008bd238;color:#fff}
+.ui-home-app .mr-button-primary:hover {background:linear-gradient(135deg,#0eaff3,#087bbb);box-shadow:0 11px 26px #008bd259}
+.ui-home-app .mr-button-glass {border:1px solid #bfd8ee80;background:#ffffff21;color:#fff;backdrop-filter:blur(10px)}
+.ui-home-app .mr-button-glass:hover {border-color:#eafaffbf;background:#ffffff38}
+.ui-home-app .mr-hero .mr-actions {animation:mr-enter .66s .3s both}
+.ui-home-app .mr-hero-highlights {max-width:880px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;border-top:1px solid #ffffff2b;padding-top:22px;margin-top:clamp(35px,4vw,48px);animation:mr-enter .8s .44s both}
+.ui-home-app .mr-highlight {display:flex;align-items:center;gap:11px;min-width:0;font-size:12.5px;line-height:1.4;font-weight:650;color:#eaf4ff}
+.ui-home-app .mr-highlight-icon {width:39px;height:39px;flex:0 0 39px;display:grid;place-items:center;border:1px solid #ffffff38;background:#ffffff1b;border-radius:10px;transition:transform .22s ease,background .22s ease}
+.ui-home-app .mr-highlight:hover .mr-highlight-icon {transform:translateY(-3px) scale(1.04);background:#ffffff34}
+.ui-home-app .mr-highlight-icon img {width:26px;height:26px;object-fit:contain}
+/* Raised banner is inside the document flow so it never covers later content. */
+.ui-home-app .mr-metric-zone {position:relative;z-index:2;margin-top:-67px;padding-bottom:42px}
+.ui-home-app .mr-metrics {border-radius:22px;min-height:137px;background:linear-gradient(145deg,#fffffff3,#f7fbffe9);border:1px solid #ffffff;box-shadow:0 21px 35px #20486b1f,0 4px 12px #0b385a0b;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;padding:22px 18px;backdrop-filter:blur(16px);animation:mr-enter .7s .3s both}
+.ui-home-app .mr-metric {display:flex;gap:12px;align-items:center;min-width:0;min-height:66px;padding:0 clamp(10px,1.2vw,24px)}
+.ui-home-app .mr-metric:not(:last-child) {border-right:1px solid #d7e2ef}
+.ui-home-app .mr-metric img {width:42px;height:42px;object-fit:contain;flex:0 0 42px;transition:transform .22s ease}
+.ui-home-app .mr-metric:hover img {transform:translateY(-4px) scale(1.045)}
+.ui-home-app .mr-metric div {min-width:0;display:grid;gap:4px}
+.ui-home-app .mr-metric strong {font-size:13.5px;line-height:1.34;letter-spacing:-.01em;color:#101e36}
+.ui-home-app .mr-metric span {font-size:11.5px;line-height:1.4;color:#586e89}
+/* Shared interior section rhythm. */
+.ui-home-app .mr-section {padding:clamp(62px,6.4vw,93px) 0}
+.ui-home-app .mr-section:nth-of-type(even) {background:#f1f6fc}
+.ui-home-app .mr-eyebrow {display:block;color:#0479ba;font-size:11px;letter-spacing:.12em;font-weight:850;margin-bottom:13px}
+.ui-home-app .mr-section h2,.ui-home-app .mr-last-cta h2 {font-size:clamp(1.85rem,2.9vw,2.7rem);letter-spacing:-.037em;font-weight:800;margin-bottom:19px;color:#0e2040}
+.ui-home-app .mr-section p {font-size:clamp(14px,1.05vw,16px);line-height:1.8;color:#596b83}
+.ui-home-app .mr-section-copy p+p {margin-top:12px}
+.ui-home-app .mr-split {display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);align-items:center;gap:clamp(32px,4.6vw,72px)}
+.ui-home-app .mr-section-copy {max-width:510px}
+.ui-home-app .mr-problem {background:#f4f8fe}
+.ui-home-app .mr-problem-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.ui-home-app .mr-picture-card {min-width:0;overflow:hidden;background:white;border:1px solid #dce7f2;border-radius:15px;box-shadow:0 8px 24px #18395c10;transition:transform .25s ease,box-shadow .25s ease}
+.ui-home-app .mr-picture-card:hover {transform:translateY(-5px);box-shadow:0 15px 34px #18395c1b}
+.ui-home-app .mr-picture-card img {width:100%;height:160px;object-fit:cover;transition:transform .45s ease}
+.ui-home-app .mr-picture-card:hover img {transform:scale(1.045)}
+.ui-home-app .mr-picture-card>div {padding:16px 14px 18px}
+.ui-home-app .mr-picture-card h3 {font-size:14px;font-weight:800;margin-bottom:8px}
+.ui-home-app .mr-picture-card p {font-size:12px;line-height:1.55}
+.ui-home-app .mr-solution {background:#fff}
+.ui-home-app .mr-text-link {margin-top:24px;display:inline-flex;gap:9px;color:#0277bc;font-weight:750;font-size:14px;transition:gap .2s ease}
+.ui-home-app .mr-text-link:hover {gap:15px}
+.ui-home-app .mr-flow-card {background:linear-gradient(145deg,#fff,#f7fbff);border:1px solid #ddeafa;border-radius:22px;box-shadow:0 14px 32px #16406713;padding:clamp(18px,2.2vw,31px)}
+.ui-home-app .mr-flow-inputs {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ui-home-app .mr-flow-inputs>div {border:1px solid #e4ebf5;background:white;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:9px;padding:16px 9px;min-height:126px;font-size:12px;font-weight:750;line-height:1.4}
+.ui-home-app .mr-flow-inputs img {width:34px;height:34px;object-fit:contain}
+.ui-home-app .mr-flow-connector {text-align:center;height:33px;font-size:23px;line-height:33px;color:#7faccf}
+.ui-home-app .mr-flow-core {background:#e9f7ff;border:1px solid #b8def5;border-radius:14px;padding:16px 18px;display:flex;gap:13px;align-items:center;justify-content:center}
+.ui-home-app .mr-flow-core-icon {width:40px;height:40px;flex:0 0 40px;background:#fff;border-radius:9px;display:grid;place-items:center}
+.ui-home-app .mr-flow-core img {width:30px;height:30px}
+.ui-home-app .mr-flow-core div {display:grid;gap:3px}
+.ui-home-app .mr-flow-core strong {font-size:14px}
+.ui-home-app .mr-flow-core div span {font-size:11px;color:#4e6d89}
+.ui-home-app .mr-flow-outputs {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.ui-home-app .mr-flow-outputs>div {display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #dee9f5;border-radius:12px;padding:13px;font-size:12px;font-weight:750}
+.ui-home-app .mr-flow-outputs img {width:32px;height:32px;object-fit:contain}
+.ui-home-app .mr-demo {background:#f0f6fd}
+.ui-home-app .mr-section-row {display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:28px}
+.ui-home-app .mr-section-row>div {max-width:660px}
+.ui-home-app .mr-section-row .mr-button {flex:0 0 auto}
+.ui-home-app .mr-preview {border-radius:20px;overflow:hidden;background:#fff;border:1px solid #dce9f6;box-shadow:0 16px 37px #183c6514;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.8fr);min-width:0}
+.ui-home-app .mr-preview-art {min-height:330px;position:relative;isolation:isolate;display:flex;align-items:flex-end;padding:clamp(24px,3vw,44px);color:white;background:#081d34}
+.ui-home-app .mr-preview-art>img {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.ui-home-app .mr-preview-art:before {content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,#061629eb,#071b3475 65%,#071b3466)}
+.ui-home-app .mr-preview-art>div {display:grid;gap:14px;max-width:450px}
+.ui-home-app .mr-preview-label {color:#bde8ff;font-size:11px;letter-spacing:.12em;font-weight:850}
+.ui-home-app .mr-preview-art strong {font-size:clamp(20px,2.1vw,28px);font-weight:800;line-height:1.26}
+.ui-home-app .mr-preview-art a {color:#b7efff;text-decoration:underline;text-underline-offset:4px;font-weight:750;font-size:14px}
+.ui-home-app .mr-preview-weather {min-width:0;padding:clamp(20px,2.3vw,32px)}
+.ui-home-app .mr-preview-weather>h3 {font-size:20px;margin-bottom:7px}
+.ui-home-app .mr-preview-weather>p {font-size:13px;margin-bottom:16px}
+.ui-home-app .mr-section-intro {text-align:center;max-width:720px;margin:0 auto 33px}
+.ui-home-app .mr-section-intro h2 {margin-bottom:12px}
+.ui-home-app .mr-card-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px}
+.ui-home-app .mr-info-card {background:linear-gradient(145deg,#fff,#f9fcff);border:1px solid #e0e9f5;border-radius:17px;min-height:222px;padding:clamp(18px,2vw,26px);box-shadow:0 10px 26px #1d47720c;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.ui-home-app .mr-info-card:hover {transform:translateY(-5px);box-shadow:0 18px 30px #19446c1c;border-color:#a9dffb}
+.ui-home-app .mr-info-icon {width:56px;height:56px;border-radius:13px;background:#ecf8ff;display:grid;place-items:center;margin-bottom:17px}
+.ui-home-app .mr-info-icon img {width:40px;height:40px;object-fit:contain}
+.ui-home-app .mr-info-card h3 {font-size:16px;margin-bottom:9px}
+.ui-home-app .mr-info-card p {font-size:13px;line-height:1.68}
+.ui-home-app .mr-audience {background:#eef5fc}
+.ui-home-app .mr-audience-card {min-height:198px}
+.ui-home-app .mr-last-cta {padding:50px 0 80px;background:#f4f8fe}
+.ui-home-app .mr-cta-surface {border-radius:23px;overflow:hidden;background:linear-gradient(90deg,#07172ce8 0%,#07182dd6 66%,#07182d94 100%),url('/ui/road-delays.webp') center 51%/cover;color:white;padding:clamp(29px,4vw,56px);display:grid;grid-template-columns:minmax(0,1.4fr) minmax(220px,.8fr);align-items:center;gap:35px;box-shadow:0 17px 33px #0b315433}
+.ui-home-app .mr-cta-surface .mr-eyebrow {color:#62cdff}
+.ui-home-app .mr-last-cta h2 {color:#fff;margin-bottom:14px}
+.ui-home-app .mr-cta-copy>p {max-width:560px;color:#dce9f8;line-height:1.7;font-size:15px}
+.ui-home-app .mr-cta-list {display:grid;gap:15px;font-size:14px;font-weight:650;color:#e1f1ff}
+.ui-home-app .mr-cta-list span {border-left:2px solid #32c1fa;padding-left:13px}
+.ui-home-app .ui-footer {padding-inline:max(clamp(18px,3.5vw,54px),calc((100% - 1380px)/2));}
+@keyframes mr-enter {from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes mr-pulse {50%{box-shadow:0 0 0 6px #18caa20b,0 0 15px #26dcbc99;opacity:.82}}
+@keyframes mr-bg-breathe {to{transform:scale(1.045)}}
+/* Wide tablet: no compressing text or action buttons. */
+@media (max-width:1100px) {
+ .ui-home-app .mr-nav-links {gap:13px}
+ .ui-home-app .mr-nav-actions {gap:7px;margin-left:0}
+ .ui-home-app .mr-nav-inner {gap:18px}
+ .ui-home-app .mr-metrics {grid-template-columns:repeat(2,minmax(0,1fr));row-gap:20px}
+ .ui-home-app .mr-metric:nth-child(2){border-right:0}
+ .ui-home-app .mr-split {grid-template-columns:1fr;gap:28px}
+ .ui-home-app .mr-section-copy {max-width:780px}
+ .ui-home-app .mr-problem-grid {max-width:850px}
+}
+@media (max-width:850px) {
+ .ui-home-app .mr-nav {position:relative}
+ .ui-home-app .mr-nav a {text-decoration:none}
+.ui-home-app .mr-nav-inner {min-height:70px}
+ .ui-home-app .mr-nav-toggle {display:flex;margin-left:auto;font-size:13px}
+ .ui-home-app .mr-nav-links {display:none;position:absolute;top:calc(100% + 0px);left:clamp(18px,3.5vw,54px);right:clamp(18px,3.5vw,54px);width:auto;max-width:none;flex-direction:column;align-items:stretch;gap:0;background:#091c35;border:1px solid #24496d;border-radius:0 0 13px 13px;padding:12px 16px 18px;box-shadow:0 22px 42px #00101c65}
+ .ui-home-app .mr-nav-links.is-open {display:flex;animation:mr-enter .24s both}
+ .ui-home-app .mr-nav-links>a {font-size:15px;padding:11px 9px;min-height:43px}
+ .ui-home-app .mr-nav-links>a:after{display:none!important}
+ .ui-home-app .mr-nav-actions {margin:12px 0 0;border-top:1px solid #24415d;padding-top:13px}
+ .ui-home-app .mr-nav-actions a {flex:1}
+ .ui-home-app .mr-hero {min-height:600px}
+ .ui-home-app .mr-hero-layout {padding-block:52px 115px}
+ .ui-home-app .mr-hero-highlights {grid-template-columns:repeat(2,minmax(0,1fr));max-width:590px}
+ .ui-home-app .mr-card-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ui-home-app .mr-preview {grid-template-columns:1fr}
+ .ui-home-app .mr-preview-art {min-height:270px}
+ .ui-home-app .mr-cta-surface {grid-template-columns:1fr}
+ .ui-home-app .mr-cta-list {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:540px) {
+ .ui-home-app .mr-nav-logo {width:155px}
+ .ui-home-app .mr-hero {min-height:auto}
+ .ui-home-app .mr-hero-image {background-position:57% center}
+ .ui-home-app .mr-hero-overlay {background:linear-gradient(90deg,#041428df,#061526b8),linear-gradient(180deg,#05152c38,#05152cd9)}
+ .ui-home-app .mr-hero-layout {padding-block:50px 100px}
+ .ui-home-app .mr-hero h1 {font-size:clamp(2.05rem,9vw,2.85rem);line-height:1.12;letter-spacing:-.04em;margin:20px 0 14px}
+ .ui-home-app .mr-desktop-break {display:none}
+ .ui-home-app .mr-badge {font-size:10px;letter-spacing:.045em;padding:7px 10px}
+ .ui-home-app .mr-hero-lead {font-size:14px;line-height:1.73}
+ .ui-home-app .mr-actions {gap:10px;margin-top:22px}
+ .ui-home-app .mr-button {font-size:13px;min-height:44px;padding:10px 18px}
+ .ui-home-app .mr-hero-highlights {gap:16px 10px;margin-top:33px;padding-top:20px}
+ .ui-home-app .mr-highlight {font-size:11px;gap:8px}
+ .ui-home-app .mr-highlight-icon {width:33px;height:33px;flex-basis:33px;border-radius:9px}
+ .ui-home-app .mr-highlight-icon img {width:24px;height:24px}
+ .ui-home-app .mr-metric-zone {margin-top:-45px;padding-bottom:28px}
+ .ui-home-app .mr-metrics {border-radius:17px;padding:15px 12px;gap:12px 0}
+ .ui-home-app .mr-metric {gap:8px;min-height:65px;padding:0 8px}
+ .ui-home-app .mr-metric:nth-child(1),.ui-home-app .mr-metric:nth-child(2) {border-bottom:1px solid #dce6f0;padding-bottom:12px}
+ .ui-home-app .mr-metric img {width:30px;height:30px;flex-basis:30px}
+ .ui-home-app .mr-metric strong {font-size:11px}
+ .ui-home-app .mr-metric span {font-size:10px}
+ .ui-home-app .mr-section {padding:60px 0}
+ .ui-home-app .mr-section h2,.ui-home-app .mr-last-cta h2 {font-size:clamp(1.65rem,7vw,2.15rem)}
+ .ui-home-app .mr-problem-grid {grid-template-columns:1fr;gap:12px}
+ .ui-home-app .mr-picture-card {display:grid;grid-template-columns:120px 1fr;min-height:132px}
+ .ui-home-app .mr-picture-card img {height:100%;min-height:132px}
+ .ui-home-app .mr-picture-card>div {align-self:center;padding:13px}
+ .ui-home-app .mr-flow-inputs {gap:5px}
+ .ui-home-app .mr-flow-inputs>div {font-size:10px;min-height:112px;padding:12px 5px}
+ .ui-home-app .mr-flow-inputs img {width:28px;height:28px}
+ .ui-home-app .mr-flow-core {padding:13px;gap:10px}
+ .ui-home-app .mr-flow-core strong {font-size:12px}
+ .ui-home-app .mr-flow-core div span {font-size:10px}
+ .ui-home-app .mr-section-row {display:block}
+ .ui-home-app .mr-section-row .mr-button {margin-top:20px}
+ .ui-home-app .mr-card-grid {gap:11px}
+ .ui-home-app .mr-info-card {padding:17px 13px;min-height:212px}
+ .ui-home-app .mr-info-card h3 {font-size:14px}
+ .ui-home-app .mr-info-card p {font-size:12px}
+ .ui-home-app .mr-info-icon {width:46px;height:46px}
+ .ui-home-app .mr-info-icon img {width:34px;height:34px}
+ .ui-home-app .mr-cta-surface {padding:25px 20px;border-radius:18px}
+ .ui-home-app .mr-cta-list {grid-template-columns:1fr;font-size:12px;gap:11px}
+}
+@media (max-width:365px) {
+ .ui-home-app .mr-hero .mr-actions {flex-direction:column;align-items:stretch}
+ .ui-home-app .mr-hero h1 {font-size:2rem}
+ .ui-home-app .mr-metric {padding:0 4px}
+ .ui-home-app .mr-flow-outputs {grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce) {
+ .ui-home-app .mr-landing *, .ui-home-app .mr-landing *:before,.ui-home-app .mr-landing *:after,
+ .ui-home-app .mr-nav * {animation:none!important;transition:none!important;transform:none!important;scroll-behavior:auto!important}
+}
